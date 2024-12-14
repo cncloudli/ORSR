@@ -1,0 +1,1242 @@
+2024-03-26 03:04:44,467 INFO: 
+                ____                _       _____  ____
+               / __ ) ____ _ _____ (_)_____/ ___/ / __ \
+              / __  |/ __ `// ___// // ___/\__ \ / /_/ /
+             / /_/ // /_/ /(__  )/ // /__ ___/ // _, _/
+            /_____/ \__,_//____//_/ \___//____//_/ |_|
+     ______                   __   __                 __      __
+    / ____/____   ____   ____/ /  / /   __  __ _____ / /__   / /
+   / / __ / __ \ / __ \ / __  /  / /   / / / // ___// //_/  / /
+  / /_/ // /_/ // /_/ // /_/ /  / /___/ /_/ // /__ / /<    /_/
+  \____/ \____/ \____/ \____/  /_____/\____/ \___//_/|_|  (_)
+    
+Version Information: 
+	BasicSR: 1.4.2
+	PyTorch: 2.2.1+cu121
+	TorchVision: 0.17.1+cpu
+2024-03-26 03:04:44,468 INFO: 
+  name: train_orsrnet_x4
+  model_type: RealESRNetModel
+  scale: 4
+  num_gpu: 1
+  manual_seed: 0
+  gt_usm: True
+  resize_prob: [0.2, 0.7, 0.1]
+  resize_range: [0.15, 1.5]
+  gaussian_noise_prob: 0.5
+  noise_range: [1, 30]
+  poisson_scale_range: [0.05, 3]
+  gray_noise_prob: 0.4
+  jpeg_range: [30, 95]
+  second_blur_prob: 0.8
+  resize_prob2: [0.3, 0.4, 0.3]
+  resize_range2: [0.3, 1.2]
+  gaussian_noise_prob2: 0.5
+  noise_range2: [1, 25]
+  poisson_scale_range2: [0.05, 2.5]
+  gray_noise_prob2: 0.4
+  jpeg_range2: [30, 95]
+  gt_size: 256
+  queue_size: 180
+  datasets:[
+    train:[
+      name: train
+      type: RealESRGANDataset
+      dataroot_gt: datasets/train
+      meta_info: datasets/train/meta_info/meta_info_train.txt
+      io_backend:[
+        type: disk
+      ]
+      blur_kernel_size: 21
+      kernel_list: ['iso', 'aniso', 'generalized_iso', 'generalized_aniso', 'plateau_iso', 'plateau_aniso']
+      kernel_prob: [0.45, 0.25, 0.12, 0.03, 0.12, 0.03]
+      sinc_prob: 0.1
+      blur_sigma: [0.2, 3]
+      betag_range: [0.5, 4]
+      betap_range: [1, 2]
+      blur_kernel_size2: 21
+      kernel_list2: ['iso', 'aniso', 'generalized_iso', 'generalized_aniso', 'plateau_iso', 'plateau_aniso']
+      kernel_prob2: [0.45, 0.25, 0.12, 0.03, 0.12, 0.03]
+      sinc_prob2: 0.1
+      blur_sigma2: [0.2, 1.5]
+      betag_range2: [0.5, 4]
+      betap_range2: [1, 2]
+      final_sinc_prob: 0.8
+      gt_size: 256
+      use_hflip: True
+      use_rot: False
+      use_shuffle: True
+      num_worker_per_gpu: 5
+      batch_size_per_gpu: 12
+      dataset_enlarge_ratio: 1
+      prefetch_mode: None
+      phase: train
+      scale: 4
+    ]
+  ]
+  network_g:[
+    type: RRDBNet
+    num_in_ch: 3
+    num_out_ch: 3
+    num_feat: 64
+    num_block: 23
+    num_grow_ch: 32
+  ]
+  path:[
+    pretrain_network_g: D:\fp\ORSR\experiments\train_orsrnet_x4\models\net_g_30000.pth
+    param_key_g: params
+    strict_load_g: True
+    resume_state: experiments\train_orsrnet_x4\training_states\30000.state
+    experiments_root: D:\fp\ORSR\experiments\train_orsrnet_x4
+    models: D:\fp\ORSR\experiments\train_orsrnet_x4\models
+    training_states: D:\fp\ORSR\experiments\train_orsrnet_x4\training_states
+    log: D:\fp\ORSR\experiments\train_orsrnet_x4
+    visualization: D:\fp\ORSR\experiments\train_orsrnet_x4\visualization
+  ]
+  train:[
+    ema_decay: 0.999
+    optim_g:[
+      type: Adam
+      lr: 0.0001
+      weight_decay: 0
+      betas: [0.9, 0.99]
+    ]
+    scheduler:[
+      type: MultiStepLR
+      milestones: [100000]
+      gamma: 0.5
+    ]
+    total_iter: 100000
+    warmup_iter: -1
+    pixel_opt:[
+      type: L1Loss
+      loss_weight: 1.0
+      reduction: mean
+    ]
+  ]
+  logger:[
+    print_freq: 100
+    save_checkpoint_freq: 5000.0
+    use_tb_logger: True
+    wandb:[
+      project: None
+      resume_id: None
+    ]
+  ]
+  dist_params:[
+    backend: nccl
+    port: 29500
+  ]
+  dist: False
+  rank: 0
+  world_size: 1
+  auto_resume: True
+  is_train: True
+  root_path: D:\fp\ORSR
+
+2024-03-26 03:04:44,667 INFO: Dataset [RealESRGANDataset] - train is built.
+2024-03-26 03:04:44,668 INFO: Training statistics:
+	Number of train images: 17250
+	Dataset enlarge ratio: 1
+	Batch size per gpu: 12
+	World size (gpu number): 1
+	Require iter number per epoch: 1438
+	Total epochs: 70; iters: 100000.
+2024-03-26 03:04:44,910 INFO: Network [RRDBNet] is created.
+2024-03-26 03:04:44,982 INFO: Network: RRDBNet, with parameters: 16,697,987
+2024-03-26 03:04:44,982 INFO: RRDBNet(
+  (conv_first): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (body): Sequential(
+    (0): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (1): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (2): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (3): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (4): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (5): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (6): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (7): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (8): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (9): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (10): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (11): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (12): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (13): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (14): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (15): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (16): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (17): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (18): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (19): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (20): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (21): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+    (22): RRDB(
+      (rdb1): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb2): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+      (rdb3): ResidualDenseBlock(
+        (conv1): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv2): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv3): Conv2d(128, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv4): Conv2d(160, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (conv5): Conv2d(192, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+      )
+    )
+  )
+  (conv_body): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv_up1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv_up2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv_hr): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (conv_last): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  (lrelu): LeakyReLU(negative_slope=0.2, inplace=True)
+)
+2024-03-26 03:04:45,232 INFO: Loading RRDBNet model from D:\fp\ORSR\experiments\train_orsrnet_x4\models\net_g_30000.pth, with param key: [params].
+2024-03-26 03:04:45,324 INFO: Use Exponential Moving Average with decay: 0.999
+2024-03-26 03:04:45,536 INFO: Network [RRDBNet] is created.
+2024-03-26 03:04:45,674 INFO: Loading RRDBNet model from D:\fp\ORSR\experiments\train_orsrnet_x4\models\net_g_30000.pth, with param key: [params_ema].
+2024-03-26 03:04:45,771 INFO: Loss [L1Loss] is created.
+2024-03-26 03:04:45,799 INFO: Model [RealESRNetModel] is created.
+2024-03-26 03:04:45,808 INFO: Resuming training from epoch: 20, iter: 30000.
+2024-03-26 03:04:59,278 INFO: Start training from epoch: 20, iter: 30000
+2024-03-26 03:08:16,256 INFO: [train..][epoch: 20, iter:  30,100, lr:(1.000e-04,)] [eta: 1 day, 16:27:25, time (data): 1.970 (0.151)] l_pix: 6.8635e-02 
+2024-03-26 03:11:00,537 INFO: [train..][epoch: 20, iter:  30,200, lr:(1.000e-04,)] [eta: 1 day, 12:08:48, time (data): 1.806 (0.077)] l_pix: 9.5928e-02 
+2024-03-26 03:13:46,643 INFO: [train..][epoch: 20, iter:  30,300, lr:(1.000e-04,)] [eta: 1 day, 10:47:14, time (data): 1.662 (0.003)] l_pix: 8.3122e-02 
+2024-03-26 03:16:32,674 INFO: [train..][epoch: 20, iter:  30,400, lr:(1.000e-04,)] [eta: 1 day, 10:04:46, time (data): 1.661 (0.003)] l_pix: 6.5322e-02 
+2024-03-26 03:19:18,888 INFO: [train..][epoch: 20, iter:  30,500, lr:(1.000e-04,)] [eta: 1 day, 9:38:34, time (data): 1.662 (0.003)] l_pix: 8.1328e-02 
+2024-03-26 03:22:05,354 INFO: [train..][epoch: 20, iter:  30,600, lr:(1.000e-04,)] [eta: 1 day, 9:20:39, time (data): 1.663 (0.003)] l_pix: 8.5771e-02 
+2024-03-26 03:24:51,633 INFO: [train..][epoch: 20, iter:  30,700, lr:(1.000e-04,)] [eta: 1 day, 9:06:44, time (data): 1.664 (0.003)] l_pix: 5.6948e-02 
+2024-03-26 03:27:37,780 INFO: [train..][epoch: 20, iter:  30,800, lr:(1.000e-04,)] [eta: 1 day, 8:55:25, time (data): 1.663 (0.003)] l_pix: 7.0992e-02 
+2024-03-26 03:30:23,938 INFO: [train..][epoch: 20, iter:  30,900, lr:(1.000e-04,)] [eta: 1 day, 8:46:01, time (data): 1.662 (0.003)] l_pix: 8.4653e-02 
+2024-03-26 03:33:10,036 INFO: [train..][epoch: 20, iter:  31,000, lr:(1.000e-04,)] [eta: 1 day, 8:37:52, time (data): 1.661 (0.003)] l_pix: 1.0013e-01 
+2024-03-26 03:35:56,561 INFO: [train..][epoch: 20, iter:  31,100, lr:(1.000e-04,)] [eta: 1 day, 8:31:09, time (data): 1.667 (0.003)] l_pix: 7.9151e-02 
+2024-03-26 03:38:43,560 INFO: [train..][epoch: 20, iter:  31,200, lr:(1.000e-04,)] [eta: 1 day, 8:25:32, time (data): 1.668 (0.003)] l_pix: 1.0700e-01 
+2024-03-26 03:41:30,883 INFO: [train..][epoch: 20, iter:  31,300, lr:(1.000e-04,)] [eta: 1 day, 8:20:38, time (data): 1.673 (0.003)] l_pix: 8.5305e-02 
+2024-03-26 03:44:18,154 INFO: [train..][epoch: 20, iter:  31,400, lr:(1.000e-04,)] [eta: 1 day, 8:16:00, time (data): 1.673 (0.003)] l_pix: 7.2646e-02 
+2024-03-26 03:47:21,281 INFO: [train..][epoch: 21, iter:  31,500, lr:(1.000e-04,)] [eta: 1 day, 8:23:40, time (data): 1.844 (0.172)] l_pix: 6.4648e-02 
+2024-03-26 03:50:09,012 INFO: [train..][epoch: 21, iter:  31,600, lr:(1.000e-04,)] [eta: 1 day, 8:19:02, time (data): 1.758 (0.084)] l_pix: 9.4528e-02 
+2024-03-26 03:52:56,542 INFO: [train..][epoch: 21, iter:  31,700, lr:(1.000e-04,)] [eta: 1 day, 8:14:29, time (data): 1.676 (0.003)] l_pix: 7.5983e-02 
+2024-03-26 03:55:43,671 INFO: [train..][epoch: 21, iter:  31,800, lr:(1.000e-04,)] [eta: 1 day, 8:09:52, time (data): 1.673 (0.003)] l_pix: 7.3467e-02 
+2024-03-26 03:58:30,940 INFO: [train..][epoch: 21, iter:  31,900, lr:(1.000e-04,)] [eta: 1 day, 8:05:32, time (data): 1.674 (0.003)] l_pix: 8.0164e-02 
+2024-03-26 04:01:18,230 INFO: [train..][epoch: 21, iter:  32,000, lr:(1.000e-04,)] [eta: 1 day, 8:01:23, time (data): 1.673 (0.003)] l_pix: 8.5083e-02 
+2024-03-26 04:04:05,447 INFO: [train..][epoch: 21, iter:  32,100, lr:(1.000e-04,)] [eta: 1 day, 7:57:18, time (data): 1.672 (0.003)] l_pix: 7.9832e-02 
+2024-03-26 04:06:52,111 INFO: [train..][epoch: 21, iter:  32,200, lr:(1.000e-04,)] [eta: 1 day, 7:53:04, time (data): 1.669 (0.003)] l_pix: 8.5002e-02 
+2024-03-26 04:09:38,296 INFO: [train..][epoch: 21, iter:  32,300, lr:(1.000e-04,)] [eta: 1 day, 7:48:43, time (data): 1.664 (0.003)] l_pix: 8.1223e-02 
+2024-03-26 04:12:24,075 INFO: [train..][epoch: 21, iter:  32,400, lr:(1.000e-04,)] [eta: 1 day, 7:44:18, time (data): 1.661 (0.003)] l_pix: 7.6136e-02 
+2024-03-26 04:15:09,693 INFO: [train..][epoch: 21, iter:  32,500, lr:(1.000e-04,)] [eta: 1 day, 7:39:57, time (data): 1.656 (0.003)] l_pix: 8.6515e-02 
+2024-03-26 04:17:55,426 INFO: [train..][epoch: 21, iter:  32,600, lr:(1.000e-04,)] [eta: 1 day, 7:35:46, time (data): 1.657 (0.003)] l_pix: 7.2132e-02 
+2024-03-26 04:20:41,102 INFO: [train..][epoch: 21, iter:  32,700, lr:(1.000e-04,)] [eta: 1 day, 7:31:41, time (data): 1.658 (0.003)] l_pix: 7.9823e-02 
+2024-03-26 04:23:27,107 INFO: [train..][epoch: 21, iter:  32,800, lr:(1.000e-04,)] [eta: 1 day, 7:27:49, time (data): 1.659 (0.003)] l_pix: 6.7091e-02 
+2024-03-26 04:26:28,140 INFO: [train..][epoch: 22, iter:  32,900, lr:(1.000e-04,)] [eta: 1 day, 7:29:49, time (data): 1.836 (0.177)] l_pix: 9.2168e-02 
+2024-03-26 04:29:13,950 INFO: [train..][epoch: 22, iter:  33,000, lr:(1.000e-04,)] [eta: 1 day, 7:25:49, time (data): 1.740 (0.083)] l_pix: 7.1177e-02 
+2024-03-26 04:31:59,862 INFO: [train..][epoch: 22, iter:  33,100, lr:(1.000e-04,)] [eta: 1 day, 7:21:56, time (data): 1.661 (0.003)] l_pix: 6.1915e-02 
+2024-03-26 04:34:45,717 INFO: [train..][epoch: 22, iter:  33,200, lr:(1.000e-04,)] [eta: 1 day, 7:18:06, time (data): 1.659 (0.003)] l_pix: 7.4836e-02 
+2024-03-26 04:37:31,542 INFO: [train..][epoch: 22, iter:  33,300, lr:(1.000e-04,)] [eta: 1 day, 7:14:19, time (data): 1.658 (0.003)] l_pix: 8.5539e-02 
+2024-03-26 04:40:17,222 INFO: [train..][epoch: 22, iter:  33,400, lr:(1.000e-04,)] [eta: 1 day, 7:10:33, time (data): 1.657 (0.003)] l_pix: 9.1093e-02 
+2024-03-26 04:43:02,923 INFO: [train..][epoch: 22, iter:  33,500, lr:(1.000e-04,)] [eta: 1 day, 7:06:51, time (data): 1.661 (0.003)] l_pix: 7.5122e-02 
+2024-03-26 04:45:48,739 INFO: [train..][epoch: 22, iter:  33,600, lr:(1.000e-04,)] [eta: 1 day, 7:03:14, time (data): 1.659 (0.003)] l_pix: 7.9005e-02 
+2024-03-26 04:48:34,879 INFO: [train..][epoch: 22, iter:  33,700, lr:(1.000e-04,)] [eta: 1 day, 6:59:46, time (data): 1.661 (0.003)] l_pix: 7.8749e-02 
+2024-03-26 04:51:21,215 INFO: [train..][epoch: 22, iter:  33,800, lr:(1.000e-04,)] [eta: 1 day, 6:56:23, time (data): 1.662 (0.003)] l_pix: 7.9368e-02 
+2024-03-26 04:54:06,967 INFO: [train..][epoch: 22, iter:  33,900, lr:(1.000e-04,)] [eta: 1 day, 6:52:53, time (data): 1.659 (0.003)] l_pix: 6.6869e-02 
+2024-03-26 04:56:52,585 INFO: [train..][epoch: 22, iter:  34,000, lr:(1.000e-04,)] [eta: 1 day, 6:49:22, time (data): 1.657 (0.003)] l_pix: 6.9400e-02 
+2024-03-26 04:59:38,926 INFO: [train..][epoch: 22, iter:  34,100, lr:(1.000e-04,)] [eta: 1 day, 6:46:05, time (data): 1.663 (0.003)] l_pix: 6.4913e-02 
+2024-03-26 05:02:24,711 INFO: [train..][epoch: 22, iter:  34,200, lr:(1.000e-04,)] [eta: 1 day, 6:42:41, time (data): 1.660 (0.003)] l_pix: 7.8945e-02 
+2024-03-26 05:05:10,648 INFO: [train..][epoch: 22, iter:  34,300, lr:(1.000e-04,)] [eta: 1 day, 6:39:21, time (data): 1.660 (0.003)] l_pix: 8.6323e-02 
+2024-03-26 05:08:11,842 INFO: [train..][epoch: 23, iter:  34,400, lr:(1.000e-04,)] [eta: 1 day, 6:39:50, time (data): 1.745 (0.087)] l_pix: 7.9057e-02 
+2024-03-26 05:10:57,440 INFO: [train..][epoch: 23, iter:  34,500, lr:(1.000e-04,)] [eta: 1 day, 6:36:23, time (data): 1.654 (0.003)] l_pix: 7.1983e-02 
+2024-03-26 05:13:43,379 INFO: [train..][epoch: 23, iter:  34,600, lr:(1.000e-04,)] [eta: 1 day, 6:33:02, time (data): 1.657 (0.003)] l_pix: 8.6700e-02 
+2024-03-26 05:16:29,566 INFO: [train..][epoch: 23, iter:  34,700, lr:(1.000e-04,)] [eta: 1 day, 6:29:46, time (data): 1.663 (0.003)] l_pix: 9.3488e-02 
+2024-03-26 05:19:15,956 INFO: [train..][epoch: 23, iter:  34,800, lr:(1.000e-04,)] [eta: 1 day, 6:26:34, time (data): 1.664 (0.003)] l_pix: 7.3502e-02 
+2024-03-26 05:22:01,641 INFO: [train..][epoch: 23, iter:  34,900, lr:(1.000e-04,)] [eta: 1 day, 6:23:14, time (data): 1.657 (0.003)] l_pix: 8.5031e-02 
+2024-03-26 05:24:47,449 INFO: [train..][epoch: 23, iter:  35,000, lr:(1.000e-04,)] [eta: 1 day, 6:19:57, time (data): 1.658 (0.003)] l_pix: 8.4358e-02 
+2024-03-26 05:24:47,451 INFO: Saving models and training states.
+2024-03-26 05:27:33,903 INFO: [train..][epoch: 23, iter:  35,100, lr:(1.000e-04,)] [eta: 1 day, 6:16:50, time (data): 1.663 (0.003)] l_pix: 8.8673e-02 
+2024-03-26 05:30:19,474 INFO: [train..][epoch: 23, iter:  35,200, lr:(1.000e-04,)] [eta: 1 day, 6:13:32, time (data): 1.659 (0.003)] l_pix: 9.1388e-02 
+2024-03-26 05:33:05,628 INFO: [train..][epoch: 23, iter:  35,300, lr:(1.000e-04,)] [eta: 1 day, 6:10:22, time (data): 1.661 (0.003)] l_pix: 8.9975e-02 
+2024-03-26 05:35:51,848 INFO: [train..][epoch: 23, iter:  35,400, lr:(1.000e-04,)] [eta: 1 day, 6:07:14, time (data): 1.662 (0.003)] l_pix: 6.3322e-02 
+2024-03-26 05:38:37,751 INFO: [train..][epoch: 23, iter:  35,500, lr:(1.000e-04,)] [eta: 1 day, 6:04:04, time (data): 1.661 (0.003)] l_pix: 1.0223e-01 
+2024-03-26 05:41:23,709 INFO: [train..][epoch: 23, iter:  35,600, lr:(1.000e-04,)] [eta: 1 day, 6:00:54, time (data): 1.660 (0.003)] l_pix: 6.6087e-02 
+2024-03-26 05:44:09,601 INFO: [train..][epoch: 23, iter:  35,700, lr:(1.000e-04,)] [eta: 1 day, 5:57:45, time (data): 1.658 (0.003)] l_pix: 8.4164e-02 
+2024-03-26 05:47:10,761 INFO: [train..][epoch: 24, iter:  35,800, lr:(1.000e-04,)] [eta: 1 day, 5:57:26, time (data): 1.747 (0.089)] l_pix: 9.0665e-02 
+2024-03-26 05:49:56,825 INFO: [train..][epoch: 24, iter:  35,900, lr:(1.000e-04,)] [eta: 1 day, 5:54:17, time (data): 1.662 (0.003)] l_pix: 7.6690e-02 
+2024-03-26 05:52:42,916 INFO: [train..][epoch: 24, iter:  36,000, lr:(1.000e-04,)] [eta: 1 day, 5:51:09, time (data): 1.661 (0.003)] l_pix: 6.9681e-02 
+2024-03-26 05:55:28,435 INFO: [train..][epoch: 24, iter:  36,100, lr:(1.000e-04,)] [eta: 1 day, 5:47:56, time (data): 1.654 (0.003)] l_pix: 6.1120e-02 
+2024-03-26 05:58:14,351 INFO: [train..][epoch: 24, iter:  36,200, lr:(1.000e-04,)] [eta: 1 day, 5:44:48, time (data): 1.657 (0.003)] l_pix: 8.5480e-02 
+2024-03-26 06:01:00,318 INFO: [train..][epoch: 24, iter:  36,300, lr:(1.000e-04,)] [eta: 1 day, 5:41:41, time (data): 1.660 (0.003)] l_pix: 7.8588e-02 
+2024-03-26 06:03:46,241 INFO: [train..][epoch: 24, iter:  36,400, lr:(1.000e-04,)] [eta: 1 day, 5:38:34, time (data): 1.660 (0.003)] l_pix: 8.7499e-02 
+2024-03-26 06:06:32,377 INFO: [train..][epoch: 24, iter:  36,500, lr:(1.000e-04,)] [eta: 1 day, 5:35:30, time (data): 1.662 (0.003)] l_pix: 1.0355e-01 
+2024-03-26 06:09:18,357 INFO: [train..][epoch: 24, iter:  36,600, lr:(1.000e-04,)] [eta: 1 day, 5:32:25, time (data): 1.661 (0.003)] l_pix: 8.2275e-02 
+2024-03-26 06:12:04,036 INFO: [train..][epoch: 24, iter:  36,700, lr:(1.000e-04,)] [eta: 1 day, 5:29:18, time (data): 1.658 (0.003)] l_pix: 7.5202e-02 
+2024-03-26 06:14:50,107 INFO: [train..][epoch: 24, iter:  36,800, lr:(1.000e-04,)] [eta: 1 day, 5:26:15, time (data): 1.660 (0.003)] l_pix: 8.1105e-02 
+2024-03-26 06:17:35,983 INFO: [train..][epoch: 24, iter:  36,900, lr:(1.000e-04,)] [eta: 1 day, 5:23:11, time (data): 1.660 (0.003)] l_pix: 6.3762e-02 
+2024-03-26 06:20:21,888 INFO: [train..][epoch: 24, iter:  37,000, lr:(1.000e-04,)] [eta: 1 day, 5:20:07, time (data): 1.659 (0.003)] l_pix: 9.8992e-02 
+2024-03-26 06:23:07,670 INFO: [train..][epoch: 24, iter:  37,100, lr:(1.000e-04,)] [eta: 1 day, 5:17:03, time (data): 1.657 (0.003)] l_pix: 8.9431e-02 
+2024-03-26 06:26:08,639 INFO: [train..][epoch: 25, iter:  37,200, lr:(1.000e-04,)] [eta: 1 day, 5:16:12, time (data): 1.750 (0.094)] l_pix: 1.1199e-01 
+2024-03-26 06:28:54,460 INFO: [train..][epoch: 25, iter:  37,300, lr:(1.000e-04,)] [eta: 1 day, 5:13:08, time (data): 1.660 (0.003)] l_pix: 7.8577e-02 
+2024-03-26 06:31:40,316 INFO: [train..][epoch: 25, iter:  37,400, lr:(1.000e-04,)] [eta: 1 day, 5:10:04, time (data): 1.659 (0.003)] l_pix: 8.3412e-02 
+2024-03-26 06:34:26,199 INFO: [train..][epoch: 25, iter:  37,500, lr:(1.000e-04,)] [eta: 1 day, 5:07:00, time (data): 1.661 (0.003)] l_pix: 1.0828e-01 
+2024-03-26 06:37:12,008 INFO: [train..][epoch: 25, iter:  37,600, lr:(1.000e-04,)] [eta: 1 day, 5:03:57, time (data): 1.659 (0.003)] l_pix: 7.4410e-02 
+2024-03-26 06:39:57,629 INFO: [train..][epoch: 25, iter:  37,700, lr:(1.000e-04,)] [eta: 1 day, 5:00:53, time (data): 1.659 (0.002)] l_pix: 8.7172e-02 
+2024-03-26 06:42:43,088 INFO: [train..][epoch: 25, iter:  37,800, lr:(1.000e-04,)] [eta: 1 day, 4:57:47, time (data): 1.656 (0.003)] l_pix: 6.7886e-02 
+2024-03-26 06:45:28,885 INFO: [train..][epoch: 25, iter:  37,900, lr:(1.000e-04,)] [eta: 1 day, 4:54:45, time (data): 1.658 (0.003)] l_pix: 7.2718e-02 
+2024-03-26 06:48:15,097 INFO: [train..][epoch: 25, iter:  38,000, lr:(1.000e-04,)] [eta: 1 day, 4:51:47, time (data): 1.661 (0.003)] l_pix: 8.5051e-02 
+2024-03-26 06:51:00,979 INFO: [train..][epoch: 25, iter:  38,100, lr:(1.000e-04,)] [eta: 1 day, 4:48:46, time (data): 1.660 (0.003)] l_pix: 7.3894e-02 
+2024-03-26 06:53:46,788 INFO: [train..][epoch: 25, iter:  38,200, lr:(1.000e-04,)] [eta: 1 day, 4:45:45, time (data): 1.659 (0.003)] l_pix: 1.1158e-01 
+2024-03-26 06:56:32,720 INFO: [train..][epoch: 25, iter:  38,300, lr:(1.000e-04,)] [eta: 1 day, 4:42:46, time (data): 1.660 (0.003)] l_pix: 8.6261e-02 
+2024-03-26 06:59:18,655 INFO: [train..][epoch: 25, iter:  38,400, lr:(1.000e-04,)] [eta: 1 day, 4:39:46, time (data): 1.660 (0.003)] l_pix: 8.1583e-02 
+2024-03-26 07:02:04,845 INFO: [train..][epoch: 25, iter:  38,500, lr:(1.000e-04,)] [eta: 1 day, 4:36:49, time (data): 1.661 (0.003)] l_pix: 8.6717e-02 
+2024-03-26 07:04:50,610 INFO: [train..][epoch: 25, iter:  38,600, lr:(1.000e-04,)] [eta: 1 day, 4:33:49, time (data): 1.659 (0.003)] l_pix: 8.2159e-02 
+2024-03-26 07:07:51,581 INFO: [train..][epoch: 26, iter:  38,700, lr:(1.000e-04,)] [eta: 1 day, 4:32:37, time (data): 1.662 (0.003)] l_pix: 5.8075e-02 
+2024-03-26 07:10:37,887 INFO: [train..][epoch: 26, iter:  38,800, lr:(1.000e-04,)] [eta: 1 day, 4:29:40, time (data): 1.663 (0.003)] l_pix: 8.2011e-02 
+2024-03-26 07:13:23,468 INFO: [train..][epoch: 26, iter:  38,900, lr:(1.000e-04,)] [eta: 1 day, 4:26:39, time (data): 1.658 (0.003)] l_pix: 6.9895e-02 
+2024-03-26 07:16:09,811 INFO: [train..][epoch: 26, iter:  39,000, lr:(1.000e-04,)] [eta: 1 day, 4:23:42, time (data): 1.661 (0.003)] l_pix: 8.6744e-02 
+2024-03-26 07:18:55,516 INFO: [train..][epoch: 26, iter:  39,100, lr:(1.000e-04,)] [eta: 1 day, 4:20:42, time (data): 1.657 (0.003)] l_pix: 7.1620e-02 
+2024-03-26 07:21:41,727 INFO: [train..][epoch: 26, iter:  39,200, lr:(1.000e-04,)] [eta: 1 day, 4:17:46, time (data): 1.660 (0.003)] l_pix: 8.1734e-02 
+2024-03-26 07:24:27,527 INFO: [train..][epoch: 26, iter:  39,300, lr:(1.000e-04,)] [eta: 1 day, 4:14:47, time (data): 1.661 (0.003)] l_pix: 7.8194e-02 
+2024-03-26 07:27:13,523 INFO: [train..][epoch: 26, iter:  39,400, lr:(1.000e-04,)] [eta: 1 day, 4:11:50, time (data): 1.660 (0.003)] l_pix: 7.8009e-02 
+2024-03-26 07:29:59,401 INFO: [train..][epoch: 26, iter:  39,500, lr:(1.000e-04,)] [eta: 1 day, 4:08:52, time (data): 1.659 (0.003)] l_pix: 1.0200e-01 
+2024-03-26 07:32:45,455 INFO: [train..][epoch: 26, iter:  39,600, lr:(1.000e-04,)] [eta: 1 day, 4:05:55, time (data): 1.660 (0.003)] l_pix: 1.0713e-01 
+2024-03-26 07:35:31,342 INFO: [train..][epoch: 26, iter:  39,700, lr:(1.000e-04,)] [eta: 1 day, 4:02:58, time (data): 1.658 (0.003)] l_pix: 8.0263e-02 
+2024-03-26 07:38:17,350 INFO: [train..][epoch: 26, iter:  39,800, lr:(1.000e-04,)] [eta: 1 day, 4:00:01, time (data): 1.659 (0.003)] l_pix: 6.2745e-02 
+2024-03-26 07:41:03,414 INFO: [train..][epoch: 26, iter:  39,900, lr:(1.000e-04,)] [eta: 1 day, 3:57:05, time (data): 1.665 (0.003)] l_pix: 9.1048e-02 
+2024-03-26 07:43:49,442 INFO: [train..][epoch: 26, iter:  40,000, lr:(1.000e-04,)] [eta: 1 day, 3:54:10, time (data): 1.662 (0.003)] l_pix: 7.6734e-02 
+2024-03-26 07:43:49,443 INFO: Saving models and training states.
+2024-03-26 07:46:50,631 INFO: [train..][epoch: 27, iter:  40,100, lr:(1.000e-04,)] [eta: 1 day, 3:52:44, time (data): 1.954 (0.302)] l_pix: 7.5081e-02 
+2024-03-26 07:49:36,758 INFO: [train..][epoch: 27, iter:  40,200, lr:(1.000e-04,)] [eta: 1 day, 3:49:48, time (data): 1.759 (0.102)] l_pix: 8.2520e-02 
+2024-03-26 07:52:23,033 INFO: [train..][epoch: 27, iter:  40,300, lr:(1.000e-04,)] [eta: 1 day, 3:46:53, time (data): 1.665 (0.003)] l_pix: 5.9666e-02 
+2024-03-26 07:55:08,913 INFO: [train..][epoch: 27, iter:  40,400, lr:(1.000e-04,)] [eta: 1 day, 3:43:56, time (data): 1.661 (0.003)] l_pix: 7.7652e-02 
+2024-03-26 07:57:54,508 INFO: [train..][epoch: 27, iter:  40,500, lr:(1.000e-04,)] [eta: 1 day, 3:40:58, time (data): 1.658 (0.003)] l_pix: 7.4318e-02 
+2024-03-26 08:00:40,462 INFO: [train..][epoch: 27, iter:  40,600, lr:(1.000e-04,)] [eta: 1 day, 3:38:02, time (data): 1.659 (0.003)] l_pix: 6.4566e-02 
+2024-03-26 08:03:26,413 INFO: [train..][epoch: 27, iter:  40,700, lr:(1.000e-04,)] [eta: 1 day, 3:35:06, time (data): 1.665 (0.003)] l_pix: 8.4364e-02 
+2024-03-26 08:06:12,508 INFO: [train..][epoch: 27, iter:  40,800, lr:(1.000e-04,)] [eta: 1 day, 3:32:11, time (data): 1.662 (0.003)] l_pix: 7.0945e-02 
+2024-03-26 08:08:58,379 INFO: [train..][epoch: 27, iter:  40,900, lr:(1.000e-04,)] [eta: 1 day, 3:29:15, time (data): 1.659 (0.003)] l_pix: 5.8486e-02 
+2024-03-26 08:11:44,238 INFO: [train..][epoch: 27, iter:  41,000, lr:(1.000e-04,)] [eta: 1 day, 3:26:19, time (data): 1.659 (0.003)] l_pix: 7.9505e-02 
+2024-03-26 08:14:30,335 INFO: [train..][epoch: 27, iter:  41,100, lr:(1.000e-04,)] [eta: 1 day, 3:23:24, time (data): 1.661 (0.002)] l_pix: 9.8778e-02 
+2024-03-26 08:17:16,640 INFO: [train..][epoch: 27, iter:  41,200, lr:(1.000e-04,)] [eta: 1 day, 3:20:31, time (data): 1.662 (0.003)] l_pix: 6.7610e-02 
+2024-03-26 08:20:02,603 INFO: [train..][epoch: 27, iter:  41,300, lr:(1.000e-04,)] [eta: 1 day, 3:17:36, time (data): 1.662 (0.003)] l_pix: 7.9930e-02 
+2024-03-26 08:22:48,868 INFO: [train..][epoch: 27, iter:  41,400, lr:(1.000e-04,)] [eta: 1 day, 3:14:43, time (data): 1.662 (0.003)] l_pix: 8.4048e-02 
+2024-03-26 08:25:49,663 INFO: [train..][epoch: 28, iter:  41,500, lr:(1.000e-04,)] [eta: 1 day, 3:13:04, time (data): 2.006 (0.350)] l_pix: 6.9432e-02 
+2024-03-26 08:28:35,108 INFO: [train..][epoch: 28, iter:  41,600, lr:(1.000e-04,)] [eta: 1 day, 3:10:06, time (data): 1.760 (0.107)] l_pix: 8.3709e-02 
+2024-03-26 08:31:21,540 INFO: [train..][epoch: 28, iter:  41,700, lr:(1.000e-04,)] [eta: 1 day, 3:07:13, time (data): 1.664 (0.003)] l_pix: 5.5699e-02 
+2024-03-26 08:34:07,987 INFO: [train..][epoch: 28, iter:  41,800, lr:(1.000e-04,)] [eta: 1 day, 3:04:21, time (data): 1.664 (0.003)] l_pix: 5.8104e-02 
+2024-03-26 08:36:54,301 INFO: [train..][epoch: 28, iter:  41,900, lr:(1.000e-04,)] [eta: 1 day, 3:01:28, time (data): 1.664 (0.003)] l_pix: 1.0051e-01 
+2024-03-26 08:39:40,144 INFO: [train..][epoch: 28, iter:  42,000, lr:(1.000e-04,)] [eta: 1 day, 2:58:32, time (data): 1.660 (0.003)] l_pix: 6.4664e-02 
+2024-03-26 08:42:26,611 INFO: [train..][epoch: 28, iter:  42,100, lr:(1.000e-04,)] [eta: 1 day, 2:55:40, time (data): 1.665 (0.003)] l_pix: 1.0992e-01 
+2024-03-26 08:45:12,679 INFO: [train..][epoch: 28, iter:  42,200, lr:(1.000e-04,)] [eta: 1 day, 2:52:46, time (data): 1.662 (0.003)] l_pix: 9.6186e-02 
+2024-03-26 08:47:58,881 INFO: [train..][epoch: 28, iter:  42,300, lr:(1.000e-04,)] [eta: 1 day, 2:49:53, time (data): 1.661 (0.003)] l_pix: 8.4834e-02 
+2024-03-26 08:50:44,909 INFO: [train..][epoch: 28, iter:  42,400, lr:(1.000e-04,)] [eta: 1 day, 2:46:59, time (data): 1.660 (0.003)] l_pix: 8.4371e-02 
+2024-03-26 08:53:30,660 INFO: [train..][epoch: 28, iter:  42,500, lr:(1.000e-04,)] [eta: 1 day, 2:44:04, time (data): 1.655 (0.002)] l_pix: 7.6862e-02 
+2024-03-26 08:56:17,153 INFO: [train..][epoch: 28, iter:  42,600, lr:(1.000e-04,)] [eta: 1 day, 2:41:13, time (data): 1.662 (0.003)] l_pix: 7.5727e-02 
+2024-03-26 08:59:03,123 INFO: [train..][epoch: 28, iter:  42,700, lr:(1.000e-04,)] [eta: 1 day, 2:38:19, time (data): 1.661 (0.003)] l_pix: 9.5002e-02 
+2024-03-26 09:01:48,849 INFO: [train..][epoch: 28, iter:  42,800, lr:(1.000e-04,)] [eta: 1 day, 2:35:25, time (data): 1.658 (0.003)] l_pix: 8.7768e-02 
+2024-03-26 09:04:34,860 INFO: [train..][epoch: 28, iter:  42,900, lr:(1.000e-04,)] [eta: 1 day, 2:32:31, time (data): 1.662 (0.003)] l_pix: 9.6037e-02 
+2024-03-26 09:07:35,847 INFO: [train..][epoch: 29, iter:  43,000, lr:(1.000e-04,)] [eta: 1 day, 2:30:44, time (data): 1.771 (0.113)] l_pix: 6.0448e-02 
+2024-03-26 09:10:21,920 INFO: [train..][epoch: 29, iter:  43,100, lr:(1.000e-04,)] [eta: 1 day, 2:27:50, time (data): 1.660 (0.003)] l_pix: 7.7216e-02 
+2024-03-26 09:13:07,660 INFO: [train..][epoch: 29, iter:  43,200, lr:(1.000e-04,)] [eta: 1 day, 2:24:56, time (data): 1.658 (0.003)] l_pix: 7.2393e-02 
+2024-03-26 09:15:53,654 INFO: [train..][epoch: 29, iter:  43,300, lr:(1.000e-04,)] [eta: 1 day, 2:22:02, time (data): 1.660 (0.003)] l_pix: 7.7545e-02 
+2024-03-26 09:18:39,953 INFO: [train..][epoch: 29, iter:  43,400, lr:(1.000e-04,)] [eta: 1 day, 2:19:10, time (data): 1.662 (0.003)] l_pix: 8.1735e-02 
+2024-03-26 09:21:25,872 INFO: [train..][epoch: 29, iter:  43,500, lr:(1.000e-04,)] [eta: 1 day, 2:16:16, time (data): 1.658 (0.003)] l_pix: 5.7396e-02 
+2024-03-26 09:24:12,227 INFO: [train..][epoch: 29, iter:  43,600, lr:(1.000e-04,)] [eta: 1 day, 2:13:25, time (data): 1.662 (0.003)] l_pix: 8.5397e-02 
+2024-03-26 09:26:58,218 INFO: [train..][epoch: 29, iter:  43,700, lr:(1.000e-04,)] [eta: 1 day, 2:10:31, time (data): 1.658 (0.003)] l_pix: 8.0272e-02 
+2024-03-26 09:29:44,376 INFO: [train..][epoch: 29, iter:  43,800, lr:(1.000e-04,)] [eta: 1 day, 2:07:39, time (data): 1.661 (0.003)] l_pix: 9.0986e-02 
+2024-03-26 09:32:30,330 INFO: [train..][epoch: 29, iter:  43,900, lr:(1.000e-04,)] [eta: 1 day, 2:04:46, time (data): 1.665 (0.003)] l_pix: 8.5368e-02 
+2024-03-26 09:35:16,270 INFO: [train..][epoch: 29, iter:  44,000, lr:(1.000e-04,)] [eta: 1 day, 2:01:53, time (data): 1.661 (0.003)] l_pix: 8.2126e-02 
+2024-03-26 09:38:02,283 INFO: [train..][epoch: 29, iter:  44,100, lr:(1.000e-04,)] [eta: 1 day, 1:59:00, time (data): 1.658 (0.002)] l_pix: 6.7191e-02 
+2024-03-26 09:40:48,308 INFO: [train..][epoch: 29, iter:  44,200, lr:(1.000e-04,)] [eta: 1 day, 1:56:08, time (data): 1.660 (0.003)] l_pix: 8.2086e-02 
+2024-03-26 09:43:34,144 INFO: [train..][epoch: 29, iter:  44,300, lr:(1.000e-04,)] [eta: 1 day, 1:53:15, time (data): 1.664 (0.003)] l_pix: 7.3450e-02 
+2024-03-26 09:46:34,811 INFO: [train..][epoch: 30, iter:  44,400, lr:(1.000e-04,)] [eta: 1 day, 1:51:19, time (data): 1.775 (0.119)] l_pix: 7.4562e-02 
+2024-03-26 09:49:20,729 INFO: [train..][epoch: 30, iter:  44,500, lr:(1.000e-04,)] [eta: 1 day, 1:48:26, time (data): 1.658 (0.003)] l_pix: 8.3636e-02 
+2024-03-26 09:52:06,828 INFO: [train..][epoch: 30, iter:  44,600, lr:(1.000e-04,)] [eta: 1 day, 1:45:33, time (data): 1.660 (0.003)] l_pix: 8.9590e-02 
+2024-03-26 09:54:52,501 INFO: [train..][epoch: 30, iter:  44,700, lr:(1.000e-04,)] [eta: 1 day, 1:42:40, time (data): 1.658 (0.003)] l_pix: 7.3548e-02 
+2024-03-26 09:57:38,374 INFO: [train..][epoch: 30, iter:  44,800, lr:(1.000e-04,)] [eta: 1 day, 1:39:47, time (data): 1.659 (0.003)] l_pix: 7.9764e-02 
+2024-03-26 10:00:24,126 INFO: [train..][epoch: 30, iter:  44,900, lr:(1.000e-04,)] [eta: 1 day, 1:36:53, time (data): 1.662 (0.003)] l_pix: 9.8853e-02 
+2024-03-26 10:03:10,083 INFO: [train..][epoch: 30, iter:  45,000, lr:(1.000e-04,)] [eta: 1 day, 1:34:01, time (data): 1.660 (0.003)] l_pix: 7.5590e-02 
+2024-03-26 10:03:10,084 INFO: Saving models and training states.
+2024-03-26 10:05:56,782 INFO: [train..][epoch: 30, iter:  45,100, lr:(1.000e-04,)] [eta: 1 day, 1:31:11, time (data): 1.667 (0.002)] l_pix: 6.1925e-02 
+2024-03-26 10:08:42,807 INFO: [train..][epoch: 30, iter:  45,200, lr:(1.000e-04,)] [eta: 1 day, 1:28:19, time (data): 1.662 (0.003)] l_pix: 8.0825e-02 
+2024-03-26 10:11:28,691 INFO: [train..][epoch: 30, iter:  45,300, lr:(1.000e-04,)] [eta: 1 day, 1:25:26, time (data): 1.660 (0.003)] l_pix: 9.6880e-02 
+2024-03-26 10:14:14,827 INFO: [train..][epoch: 30, iter:  45,400, lr:(1.000e-04,)] [eta: 1 day, 1:22:35, time (data): 1.661 (0.003)] l_pix: 9.4386e-02 
+2024-03-26 10:17:00,919 INFO: [train..][epoch: 30, iter:  45,500, lr:(1.000e-04,)] [eta: 1 day, 1:19:43, time (data): 1.668 (0.003)] l_pix: 8.1228e-02 
+2024-03-26 10:19:47,193 INFO: [train..][epoch: 30, iter:  45,600, lr:(1.000e-04,)] [eta: 1 day, 1:16:52, time (data): 1.664 (0.003)] l_pix: 9.2840e-02 
+2024-03-26 10:22:33,272 INFO: [train..][epoch: 30, iter:  45,700, lr:(1.000e-04,)] [eta: 1 day, 1:14:01, time (data): 1.657 (0.003)] l_pix: 7.0285e-02 
+2024-03-26 10:25:19,233 INFO: [train..][epoch: 30, iter:  45,800, lr:(1.000e-04,)] [eta: 1 day, 1:11:09, time (data): 1.659 (0.003)] l_pix: 1.0604e-01 
+2024-03-26 10:28:20,036 INFO: [train..][epoch: 31, iter:  45,900, lr:(1.000e-04,)] [eta: 1 day, 1:09:07, time (data): 1.669 (0.003)] l_pix: 8.0716e-02 
+2024-03-26 10:31:06,311 INFO: [train..][epoch: 31, iter:  46,000, lr:(1.000e-04,)] [eta: 1 day, 1:06:16, time (data): 1.664 (0.003)] l_pix: 7.5639e-02 
+2024-03-26 10:33:52,408 INFO: [train..][epoch: 31, iter:  46,100, lr:(1.000e-04,)] [eta: 1 day, 1:03:25, time (data): 1.657 (0.003)] l_pix: 6.3588e-02 
+2024-03-26 10:36:38,759 INFO: [train..][epoch: 31, iter:  46,200, lr:(1.000e-04,)] [eta: 1 day, 1:00:34, time (data): 1.662 (0.003)] l_pix: 7.9527e-02 
+2024-03-26 10:39:24,696 INFO: [train..][epoch: 31, iter:  46,300, lr:(1.000e-04,)] [eta: 1 day, 0:57:42, time (data): 1.663 (0.003)] l_pix: 7.6815e-02 
+2024-03-26 10:42:10,845 INFO: [train..][epoch: 31, iter:  46,400, lr:(1.000e-04,)] [eta: 1 day, 0:54:51, time (data): 1.662 (0.003)] l_pix: 8.8573e-02 
+2024-03-26 10:44:57,198 INFO: [train..][epoch: 31, iter:  46,500, lr:(1.000e-04,)] [eta: 1 day, 0:52:00, time (data): 1.664 (0.003)] l_pix: 8.3291e-02 
+2024-03-26 10:47:43,165 INFO: [train..][epoch: 31, iter:  46,600, lr:(1.000e-04,)] [eta: 1 day, 0:49:09, time (data): 1.660 (0.003)] l_pix: 8.2801e-02 
+2024-03-26 10:50:29,121 INFO: [train..][epoch: 31, iter:  46,700, lr:(1.000e-04,)] [eta: 1 day, 0:46:17, time (data): 1.658 (0.003)] l_pix: 1.0398e-01 
+2024-03-26 10:53:15,246 INFO: [train..][epoch: 31, iter:  46,800, lr:(1.000e-04,)] [eta: 1 day, 0:43:26, time (data): 1.661 (0.003)] l_pix: 8.5085e-02 
+2024-03-26 10:56:01,574 INFO: [train..][epoch: 31, iter:  46,900, lr:(1.000e-04,)] [eta: 1 day, 0:40:35, time (data): 1.664 (0.003)] l_pix: 7.8522e-02 
+2024-03-26 10:58:47,621 INFO: [train..][epoch: 31, iter:  47,000, lr:(1.000e-04,)] [eta: 1 day, 0:37:44, time (data): 1.661 (0.003)] l_pix: 7.7699e-02 
+2024-03-26 11:01:33,679 INFO: [train..][epoch: 31, iter:  47,100, lr:(1.000e-04,)] [eta: 1 day, 0:34:53, time (data): 1.675 (0.003)] l_pix: 7.1423e-02 
+2024-03-26 11:04:19,759 INFO: [train..][epoch: 31, iter:  47,200, lr:(1.000e-04,)] [eta: 1 day, 0:32:02, time (data): 1.663 (0.003)] l_pix: 6.0847e-02 
+2024-03-26 11:07:21,280 INFO: [train..][epoch: 32, iter:  47,300, lr:(1.000e-04,)] [eta: 1 day, 0:29:58, time (data): 1.669 (0.003)] l_pix: 7.1615e-02 
+2024-03-26 11:10:07,619 INFO: [train..][epoch: 32, iter:  47,400, lr:(1.000e-04,)] [eta: 1 day, 0:27:08, time (data): 1.664 (0.003)] l_pix: 9.3065e-02 
+2024-03-26 11:12:53,930 INFO: [train..][epoch: 32, iter:  47,500, lr:(1.000e-04,)] [eta: 1 day, 0:24:17, time (data): 1.672 (0.002)] l_pix: 9.6702e-02 
+2024-03-26 11:15:40,258 INFO: [train..][epoch: 32, iter:  47,600, lr:(1.000e-04,)] [eta: 1 day, 0:21:27, time (data): 1.664 (0.003)] l_pix: 9.1985e-02 
+2024-03-26 11:18:26,501 INFO: [train..][epoch: 32, iter:  47,700, lr:(1.000e-04,)] [eta: 1 day, 0:18:36, time (data): 1.655 (0.003)] l_pix: 6.2869e-02 
+2024-03-26 11:21:12,632 INFO: [train..][epoch: 32, iter:  47,800, lr:(1.000e-04,)] [eta: 1 day, 0:15:45, time (data): 1.661 (0.003)] l_pix: 7.6284e-02 
+2024-03-26 11:23:59,018 INFO: [train..][epoch: 32, iter:  47,900, lr:(1.000e-04,)] [eta: 1 day, 0:12:55, time (data): 1.678 (0.003)] l_pix: 8.7413e-02 
+2024-03-26 11:26:45,508 INFO: [train..][epoch: 32, iter:  48,000, lr:(1.000e-04,)] [eta: 1 day, 0:10:05, time (data): 1.666 (0.003)] l_pix: 1.0064e-01 
+2024-03-26 11:29:31,883 INFO: [train..][epoch: 32, iter:  48,100, lr:(1.000e-04,)] [eta: 1 day, 0:07:15, time (data): 1.671 (0.003)] l_pix: 8.1043e-02 
+2024-03-26 11:32:18,097 INFO: [train..][epoch: 32, iter:  48,200, lr:(1.000e-04,)] [eta: 1 day, 0:04:25, time (data): 1.663 (0.003)] l_pix: 8.2079e-02 
+2024-03-26 11:35:04,534 INFO: [train..][epoch: 32, iter:  48,300, lr:(1.000e-04,)] [eta: 1 day, 0:01:35, time (data): 1.679 (0.003)] l_pix: 7.1164e-02 
+2024-03-26 11:37:50,481 INFO: [train..][epoch: 32, iter:  48,400, lr:(1.000e-04,)] [eta: 23:58:44, time (data): 1.661 (0.003)] l_pix: 8.3319e-02 
+2024-03-26 11:40:36,902 INFO: [train..][epoch: 32, iter:  48,500, lr:(1.000e-04,)] [eta: 23:55:54, time (data): 1.667 (0.003)] l_pix: 1.0217e-01 
+2024-03-26 11:43:22,952 INFO: [train..][epoch: 32, iter:  48,600, lr:(1.000e-04,)] [eta: 23:53:04, time (data): 1.661 (0.003)] l_pix: 7.2375e-02 
+2024-03-26 11:46:24,130 INFO: [train..][epoch: 33, iter:  48,700, lr:(1.000e-04,)] [eta: 23:50:54, time (data): 1.672 (0.003)] l_pix: 9.3208e-02 
+2024-03-26 11:49:10,262 INFO: [train..][epoch: 33, iter:  48,800, lr:(1.000e-04,)] [eta: 23:48:04, time (data): 1.662 (0.003)] l_pix: 7.3778e-02 
+2024-03-26 11:51:56,453 INFO: [train..][epoch: 33, iter:  48,900, lr:(1.000e-04,)] [eta: 23:45:13, time (data): 1.671 (0.003)] l_pix: 8.1235e-02 
+2024-03-26 11:54:42,728 INFO: [train..][epoch: 33, iter:  49,000, lr:(1.000e-04,)] [eta: 23:42:23, time (data): 1.663 (0.003)] l_pix: 8.5119e-02 
+2024-03-26 11:57:28,762 INFO: [train..][epoch: 33, iter:  49,100, lr:(1.000e-04,)] [eta: 23:39:32, time (data): 1.684 (0.002)] l_pix: 7.0249e-02 
+2024-03-26 12:00:14,943 INFO: [train..][epoch: 33, iter:  49,200, lr:(1.000e-04,)] [eta: 23:36:42, time (data): 1.663 (0.003)] l_pix: 8.8770e-02 
+2024-03-26 12:03:01,401 INFO: [train..][epoch: 33, iter:  49,300, lr:(1.000e-04,)] [eta: 23:33:52, time (data): 1.662 (0.003)] l_pix: 7.6132e-02 
+2024-03-26 12:05:47,615 INFO: [train..][epoch: 33, iter:  49,400, lr:(1.000e-04,)] [eta: 23:31:02, time (data): 1.662 (0.003)] l_pix: 7.9934e-02 
+2024-03-26 12:08:33,994 INFO: [train..][epoch: 33, iter:  49,500, lr:(1.000e-04,)] [eta: 23:28:12, time (data): 1.721 (0.003)] l_pix: 6.4468e-02 
+2024-03-26 12:11:20,318 INFO: [train..][epoch: 33, iter:  49,600, lr:(1.000e-04,)] [eta: 23:25:22, time (data): 1.665 (0.003)] l_pix: 7.8628e-02 
+2024-03-26 12:14:06,398 INFO: [train..][epoch: 33, iter:  49,700, lr:(1.000e-04,)] [eta: 23:22:32, time (data): 1.651 (0.002)] l_pix: 7.0206e-02 
+2024-03-26 12:16:53,075 INFO: [train..][epoch: 33, iter:  49,800, lr:(1.000e-04,)] [eta: 23:19:43, time (data): 1.666 (0.003)] l_pix: 5.8750e-02 
+2024-03-26 12:19:39,459 INFO: [train..][epoch: 33, iter:  49,900, lr:(1.000e-04,)] [eta: 23:16:53, time (data): 1.752 (0.003)] l_pix: 8.5095e-02 
+2024-03-26 12:22:25,610 INFO: [train..][epoch: 33, iter:  50,000, lr:(1.000e-04,)] [eta: 23:14:03, time (data): 1.662 (0.003)] l_pix: 7.6591e-02 
+2024-03-26 12:22:25,610 INFO: Saving models and training states.
+2024-03-26 12:25:12,181 INFO: [train..][epoch: 33, iter:  50,100, lr:(1.000e-04,)] [eta: 23:11:14, time (data): 1.662 (0.003)] l_pix: 8.3301e-02 
+2024-03-26 12:28:12,983 INFO: [train..][epoch: 34, iter:  50,200, lr:(1.000e-04,)] [eta: 23:09:00, time (data): 1.808 (0.154)] l_pix: 9.5177e-02 
+2024-03-26 12:30:59,289 INFO: [train..][epoch: 34, iter:  50,300, lr:(1.000e-04,)] [eta: 23:06:10, time (data): 1.736 (0.078)] l_pix: 7.6180e-02 
+2024-03-26 12:33:45,540 INFO: [train..][epoch: 34, iter:  50,400, lr:(1.000e-04,)] [eta: 23:03:20, time (data): 1.664 (0.003)] l_pix: 7.4142e-02 
+2024-03-26 12:36:32,114 INFO: [train..][epoch: 34, iter:  50,500, lr:(1.000e-04,)] [eta: 23:00:31, time (data): 1.665 (0.003)] l_pix: 8.3158e-02 
+2024-03-26 12:39:18,383 INFO: [train..][epoch: 34, iter:  50,600, lr:(1.000e-04,)] [eta: 22:57:41, time (data): 1.663 (0.003)] l_pix: 8.5534e-02 
+2024-03-26 12:42:04,927 INFO: [train..][epoch: 34, iter:  50,700, lr:(1.000e-04,)] [eta: 22:54:52, time (data): 1.664 (0.003)] l_pix: 9.4583e-02 
+2024-03-26 12:44:50,916 INFO: [train..][epoch: 34, iter:  50,800, lr:(1.000e-04,)] [eta: 22:52:01, time (data): 1.661 (0.003)] l_pix: 6.4072e-02 
+2024-03-26 12:47:37,032 INFO: [train..][epoch: 34, iter:  50,900, lr:(1.000e-04,)] [eta: 22:49:11, time (data): 1.661 (0.003)] l_pix: 6.6583e-02 
+2024-03-26 12:50:23,045 INFO: [train..][epoch: 34, iter:  51,000, lr:(1.000e-04,)] [eta: 22:46:21, time (data): 1.660 (0.003)] l_pix: 1.0229e-01 
+2024-03-26 12:53:09,155 INFO: [train..][epoch: 34, iter:  51,100, lr:(1.000e-04,)] [eta: 22:43:31, time (data): 1.660 (0.003)] l_pix: 1.1105e-01 
+2024-03-26 12:55:55,522 INFO: [train..][epoch: 34, iter:  51,200, lr:(1.000e-04,)] [eta: 22:40:41, time (data): 1.664 (0.003)] l_pix: 1.0107e-01 
+2024-03-26 12:58:41,520 INFO: [train..][epoch: 34, iter:  51,300, lr:(1.000e-04,)] [eta: 22:37:51, time (data): 1.662 (0.003)] l_pix: 8.7577e-02 
+2024-03-26 13:01:27,941 INFO: [train..][epoch: 34, iter:  51,400, lr:(1.000e-04,)] [eta: 22:35:02, time (data): 1.663 (0.003)] l_pix: 8.0266e-02 
+2024-03-26 13:04:14,040 INFO: [train..][epoch: 34, iter:  51,500, lr:(1.000e-04,)] [eta: 22:32:12, time (data): 1.662 (0.003)] l_pix: 8.3214e-02 
+2024-03-26 13:07:15,278 INFO: [train..][epoch: 35, iter:  51,600, lr:(1.000e-04,)] [eta: 22:29:56, time (data): 1.824 (0.165)] l_pix: 7.4909e-02 
+2024-03-26 13:10:01,591 INFO: [train..][epoch: 35, iter:  51,700, lr:(1.000e-04,)] [eta: 22:27:06, time (data): 1.741 (0.081)] l_pix: 7.5243e-02 
+2024-03-26 13:12:47,575 INFO: [train..][epoch: 35, iter:  51,800, lr:(1.000e-04,)] [eta: 22:24:16, time (data): 1.659 (0.003)] l_pix: 6.2701e-02 
+2024-03-26 13:15:33,787 INFO: [train..][epoch: 35, iter:  51,900, lr:(1.000e-04,)] [eta: 22:21:26, time (data): 1.661 (0.003)] l_pix: 8.6140e-02 
+2024-03-26 13:18:20,051 INFO: [train..][epoch: 35, iter:  52,000, lr:(1.000e-04,)] [eta: 22:18:36, time (data): 1.664 (0.003)] l_pix: 7.7092e-02 
+2024-03-26 13:21:06,442 INFO: [train..][epoch: 35, iter:  52,100, lr:(1.000e-04,)] [eta: 22:15:47, time (data): 1.664 (0.003)] l_pix: 7.9405e-02 
+2024-03-26 13:23:52,804 INFO: [train..][epoch: 35, iter:  52,200, lr:(1.000e-04,)] [eta: 22:12:57, time (data): 1.663 (0.003)] l_pix: 9.4262e-02 
+2024-03-26 13:26:38,944 INFO: [train..][epoch: 35, iter:  52,300, lr:(1.000e-04,)] [eta: 22:10:08, time (data): 1.662 (0.003)] l_pix: 9.0414e-02 
+2024-03-26 13:29:25,179 INFO: [train..][epoch: 35, iter:  52,400, lr:(1.000e-04,)] [eta: 22:07:18, time (data): 1.664 (0.003)] l_pix: 9.3439e-02 
+2024-03-26 13:32:11,582 INFO: [train..][epoch: 35, iter:  52,500, lr:(1.000e-04,)] [eta: 22:04:29, time (data): 1.664 (0.003)] l_pix: 7.6425e-02 
+2024-03-26 13:34:57,900 INFO: [train..][epoch: 35, iter:  52,600, lr:(1.000e-04,)] [eta: 22:01:39, time (data): 1.662 (0.003)] l_pix: 7.1257e-02 
+2024-03-26 13:37:44,376 INFO: [train..][epoch: 35, iter:  52,700, lr:(1.000e-04,)] [eta: 21:58:50, time (data): 1.663 (0.003)] l_pix: 7.9039e-02 
+2024-03-26 13:40:30,830 INFO: [train..][epoch: 35, iter:  52,800, lr:(1.000e-04,)] [eta: 21:56:01, time (data): 1.665 (0.003)] l_pix: 9.5389e-02 
+2024-03-26 13:43:17,058 INFO: [train..][epoch: 35, iter:  52,900, lr:(1.000e-04,)] [eta: 21:53:12, time (data): 1.663 (0.003)] l_pix: 6.7012e-02 
+2024-03-26 13:46:18,313 INFO: [train..][epoch: 36, iter:  53,000, lr:(1.000e-04,)] [eta: 21:50:53, time (data): 1.836 (0.175)] l_pix: 8.4902e-02 
+2024-03-26 13:49:04,485 INFO: [train..][epoch: 36, iter:  53,100, lr:(1.000e-04,)] [eta: 21:48:03, time (data): 1.742 (0.082)] l_pix: 7.5320e-02 
+2024-03-26 13:51:51,078 INFO: [train..][epoch: 36, iter:  53,200, lr:(1.000e-04,)] [eta: 21:45:14, time (data): 1.668 (0.003)] l_pix: 9.8722e-02 
+2024-03-26 13:54:37,443 INFO: [train..][epoch: 36, iter:  53,300, lr:(1.000e-04,)] [eta: 21:42:25, time (data): 1.666 (0.003)] l_pix: 8.8754e-02 
+2024-03-26 13:57:23,519 INFO: [train..][epoch: 36, iter:  53,400, lr:(1.000e-04,)] [eta: 21:39:35, time (data): 1.659 (0.003)] l_pix: 8.4162e-02 
+2024-03-26 14:00:09,994 INFO: [train..][epoch: 36, iter:  53,500, lr:(1.000e-04,)] [eta: 21:36:46, time (data): 1.662 (0.003)] l_pix: 5.7816e-02 
+2024-03-26 14:02:56,487 INFO: [train..][epoch: 36, iter:  53,600, lr:(1.000e-04,)] [eta: 21:33:57, time (data): 1.666 (0.003)] l_pix: 7.4152e-02 
+2024-03-26 14:05:42,931 INFO: [train..][epoch: 36, iter:  53,700, lr:(1.000e-04,)] [eta: 21:31:08, time (data): 1.665 (0.003)] l_pix: 7.5400e-02 
+2024-03-26 14:08:29,488 INFO: [train..][epoch: 36, iter:  53,800, lr:(1.000e-04,)] [eta: 21:28:19, time (data): 1.664 (0.003)] l_pix: 7.1655e-02 
+2024-03-26 14:11:15,678 INFO: [train..][epoch: 36, iter:  53,900, lr:(1.000e-04,)] [eta: 21:25:30, time (data): 1.663 (0.003)] l_pix: 8.1653e-02 
+2024-03-26 14:14:02,182 INFO: [train..][epoch: 36, iter:  54,000, lr:(1.000e-04,)] [eta: 21:22:41, time (data): 1.667 (0.003)] l_pix: 7.0821e-02 
+2024-03-26 14:16:48,734 INFO: [train..][epoch: 36, iter:  54,100, lr:(1.000e-04,)] [eta: 21:19:52, time (data): 1.666 (0.003)] l_pix: 6.9247e-02 
+2024-03-26 14:19:35,185 INFO: [train..][epoch: 36, iter:  54,200, lr:(1.000e-04,)] [eta: 21:17:03, time (data): 1.665 (0.003)] l_pix: 8.3687e-02 
+2024-03-26 14:22:21,892 INFO: [train..][epoch: 36, iter:  54,300, lr:(1.000e-04,)] [eta: 21:14:15, time (data): 1.666 (0.003)] l_pix: 8.3650e-02 
+2024-03-26 14:25:08,397 INFO: [train..][epoch: 36, iter:  54,400, lr:(1.000e-04,)] [eta: 21:11:26, time (data): 1.667 (0.003)] l_pix: 7.8731e-02 
+2024-03-26 14:28:09,815 INFO: [train..][epoch: 37, iter:  54,500, lr:(1.000e-04,)] [eta: 21:09:05, time (data): 1.749 (0.087)] l_pix: 8.9244e-02 
+2024-03-26 14:30:56,266 INFO: [train..][epoch: 37, iter:  54,600, lr:(1.000e-04,)] [eta: 21:06:16, time (data): 1.665 (0.003)] l_pix: 8.6260e-02 
+2024-03-26 14:33:42,769 INFO: [train..][epoch: 37, iter:  54,700, lr:(1.000e-04,)] [eta: 21:03:27, time (data): 1.665 (0.003)] l_pix: 8.8096e-02 
+2024-03-26 14:36:29,050 INFO: [train..][epoch: 37, iter:  54,800, lr:(1.000e-04,)] [eta: 21:00:38, time (data): 1.664 (0.003)] l_pix: 8.9115e-02 
+2024-03-26 14:39:15,733 INFO: [train..][epoch: 37, iter:  54,900, lr:(1.000e-04,)] [eta: 20:57:49, time (data): 1.666 (0.003)] l_pix: 8.2497e-02 
+2024-03-26 14:42:02,313 INFO: [train..][epoch: 37, iter:  55,000, lr:(1.000e-04,)] [eta: 20:55:01, time (data): 1.666 (0.003)] l_pix: 7.7323e-02 
+2024-03-26 14:42:02,314 INFO: Saving models and training states.
+2024-03-26 14:44:49,093 INFO: [train..][epoch: 37, iter:  55,100, lr:(1.000e-04,)] [eta: 20:52:12, time (data): 1.664 (0.003)] l_pix: 7.9870e-02 
+2024-03-26 14:47:35,429 INFO: [train..][epoch: 37, iter:  55,200, lr:(1.000e-04,)] [eta: 20:49:23, time (data): 1.665 (0.003)] l_pix: 7.2229e-02 
+2024-03-26 14:50:21,816 INFO: [train..][epoch: 37, iter:  55,300, lr:(1.000e-04,)] [eta: 20:46:34, time (data): 1.664 (0.003)] l_pix: 7.5077e-02 
+2024-03-26 14:53:08,138 INFO: [train..][epoch: 37, iter:  55,400, lr:(1.000e-04,)] [eta: 20:43:45, time (data): 1.664 (0.003)] l_pix: 6.8521e-02 
+2024-03-26 14:55:54,291 INFO: [train..][epoch: 37, iter:  55,500, lr:(1.000e-04,)] [eta: 20:40:56, time (data): 1.663 (0.003)] l_pix: 8.8579e-02 
+2024-03-26 14:58:40,834 INFO: [train..][epoch: 37, iter:  55,600, lr:(1.000e-04,)] [eta: 20:38:07, time (data): 1.665 (0.003)] l_pix: 7.3082e-02 
+2024-03-26 15:01:27,492 INFO: [train..][epoch: 37, iter:  55,700, lr:(1.000e-04,)] [eta: 20:35:18, time (data): 1.666 (0.003)] l_pix: 9.0244e-02 
+2024-03-26 15:04:13,777 INFO: [train..][epoch: 37, iter:  55,800, lr:(1.000e-04,)] [eta: 20:32:29, time (data): 1.663 (0.003)] l_pix: 9.6832e-02 
+2024-03-26 15:07:15,033 INFO: [train..][epoch: 38, iter:  55,900, lr:(1.000e-04,)] [eta: 20:30:06, time (data): 1.750 (0.089)] l_pix: 7.7404e-02 
+2024-03-26 15:10:01,336 INFO: [train..][epoch: 38, iter:  56,000, lr:(1.000e-04,)] [eta: 20:27:17, time (data): 1.665 (0.003)] l_pix: 5.8331e-02 
+2024-03-26 15:12:47,692 INFO: [train..][epoch: 38, iter:  56,100, lr:(1.000e-04,)] [eta: 20:24:28, time (data): 1.664 (0.003)] l_pix: 7.7174e-02 
+2024-03-26 15:15:33,782 INFO: [train..][epoch: 38, iter:  56,200, lr:(1.000e-04,)] [eta: 20:21:38, time (data): 1.661 (0.003)] l_pix: 6.7315e-02 
+2024-03-26 15:18:20,121 INFO: [train..][epoch: 38, iter:  56,300, lr:(1.000e-04,)] [eta: 20:18:49, time (data): 1.662 (0.003)] l_pix: 9.9502e-02 
+2024-03-26 15:21:06,847 INFO: [train..][epoch: 38, iter:  56,400, lr:(1.000e-04,)] [eta: 20:16:01, time (data): 1.669 (0.003)] l_pix: 8.1966e-02 
+2024-03-26 15:23:53,096 INFO: [train..][epoch: 38, iter:  56,500, lr:(1.000e-04,)] [eta: 20:13:12, time (data): 1.665 (0.003)] l_pix: 9.2603e-02 
+2024-03-26 15:26:39,042 INFO: [train..][epoch: 38, iter:  56,600, lr:(1.000e-04,)] [eta: 20:10:22, time (data): 1.658 (0.003)] l_pix: 1.0430e-01 
+2024-03-26 15:29:25,526 INFO: [train..][epoch: 38, iter:  56,700, lr:(1.000e-04,)] [eta: 20:07:33, time (data): 1.662 (0.003)] l_pix: 7.5100e-02 
+2024-03-26 15:32:11,887 INFO: [train..][epoch: 38, iter:  56,800, lr:(1.000e-04,)] [eta: 20:04:44, time (data): 1.664 (0.003)] l_pix: 7.0646e-02 
+2024-03-26 15:34:58,133 INFO: [train..][epoch: 38, iter:  56,900, lr:(1.000e-04,)] [eta: 20:01:55, time (data): 1.663 (0.003)] l_pix: 6.8405e-02 
+2024-03-26 15:37:44,268 INFO: [train..][epoch: 38, iter:  57,000, lr:(1.000e-04,)] [eta: 19:59:06, time (data): 1.661 (0.003)] l_pix: 7.0919e-02 
+2024-03-26 15:40:30,966 INFO: [train..][epoch: 38, iter:  57,100, lr:(1.000e-04,)] [eta: 19:56:18, time (data): 1.665 (0.003)] l_pix: 8.7114e-02 
+2024-03-26 15:43:17,239 INFO: [train..][epoch: 38, iter:  57,200, lr:(1.000e-04,)] [eta: 19:53:29, time (data): 1.665 (0.003)] l_pix: 7.4213e-02 
+2024-03-26 15:46:03,732 INFO: [train..][epoch: 38, iter:  57,300, lr:(1.000e-04,)] [eta: 19:50:40, time (data): 1.665 (0.003)] l_pix: 6.6102e-02 
+2024-03-26 15:49:05,180 INFO: [train..][epoch: 39, iter:  57,400, lr:(1.000e-04,)] [eta: 19:48:15, time (data): 1.666 (0.003)] l_pix: 7.0170e-02 
+2024-03-26 15:51:51,435 INFO: [train..][epoch: 39, iter:  57,500, lr:(1.000e-04,)] [eta: 19:45:26, time (data): 1.664 (0.003)] l_pix: 6.6335e-02 
+2024-03-26 15:54:38,145 INFO: [train..][epoch: 39, iter:  57,600, lr:(1.000e-04,)] [eta: 19:42:37, time (data): 1.667 (0.003)] l_pix: 8.7509e-02 
+2024-03-26 15:57:24,412 INFO: [train..][epoch: 39, iter:  57,700, lr:(1.000e-04,)] [eta: 19:39:48, time (data): 1.664 (0.003)] l_pix: 7.2042e-02 
+2024-03-26 16:00:10,634 INFO: [train..][epoch: 39, iter:  57,800, lr:(1.000e-04,)] [eta: 19:36:59, time (data): 1.664 (0.003)] l_pix: 7.8291e-02 
+2024-03-26 16:02:56,828 INFO: [train..][epoch: 39, iter:  57,900, lr:(1.000e-04,)] [eta: 19:34:10, time (data): 1.663 (0.003)] l_pix: 9.4373e-02 
+2024-03-26 16:05:43,139 INFO: [train..][epoch: 39, iter:  58,000, lr:(1.000e-04,)] [eta: 19:31:21, time (data): 1.667 (0.003)] l_pix: 7.5364e-02 
+2024-03-26 16:08:29,534 INFO: [train..][epoch: 39, iter:  58,100, lr:(1.000e-04,)] [eta: 19:28:33, time (data): 1.665 (0.003)] l_pix: 8.7228e-02 
+2024-03-26 16:11:15,921 INFO: [train..][epoch: 39, iter:  58,200, lr:(1.000e-04,)] [eta: 19:25:44, time (data): 1.662 (0.003)] l_pix: 7.1267e-02 
+2024-03-26 16:14:02,253 INFO: [train..][epoch: 39, iter:  58,300, lr:(1.000e-04,)] [eta: 19:22:55, time (data): 1.663 (0.003)] l_pix: 8.0760e-02 
+2024-03-26 16:16:48,771 INFO: [train..][epoch: 39, iter:  58,400, lr:(1.000e-04,)] [eta: 19:20:06, time (data): 1.666 (0.003)] l_pix: 9.1804e-02 
+2024-03-26 16:19:34,853 INFO: [train..][epoch: 39, iter:  58,500, lr:(1.000e-04,)] [eta: 19:17:17, time (data): 1.663 (0.003)] l_pix: 8.0500e-02 
+2024-03-26 16:22:21,436 INFO: [train..][epoch: 39, iter:  58,600, lr:(1.000e-04,)] [eta: 19:14:29, time (data): 1.666 (0.003)] l_pix: 7.4505e-02 
+2024-03-26 16:25:07,647 INFO: [train..][epoch: 39, iter:  58,700, lr:(1.000e-04,)] [eta: 19:11:40, time (data): 1.664 (0.003)] l_pix: 9.2492e-02 
+2024-03-26 16:28:08,827 INFO: [train..][epoch: 40, iter:  58,800, lr:(1.000e-04,)] [eta: 19:09:13, time (data): 1.657 (0.003)] l_pix: 8.7904e-02 
+2024-03-26 16:30:55,383 INFO: [train..][epoch: 40, iter:  58,900, lr:(1.000e-04,)] [eta: 19:06:24, time (data): 1.662 (0.003)] l_pix: 5.6562e-02 
+2024-03-26 16:33:41,640 INFO: [train..][epoch: 40, iter:  59,000, lr:(1.000e-04,)] [eta: 19:03:35, time (data): 1.664 (0.003)] l_pix: 8.3790e-02 
+2024-03-26 16:36:27,971 INFO: [train..][epoch: 40, iter:  59,100, lr:(1.000e-04,)] [eta: 19:00:46, time (data): 1.664 (0.003)] l_pix: 7.2585e-02 
+2024-03-26 16:39:14,001 INFO: [train..][epoch: 40, iter:  59,200, lr:(1.000e-04,)] [eta: 18:57:57, time (data): 1.661 (0.003)] l_pix: 6.9185e-02 
+2024-03-26 16:42:00,298 INFO: [train..][epoch: 40, iter:  59,300, lr:(1.000e-04,)] [eta: 18:55:08, time (data): 1.662 (0.003)] l_pix: 8.1966e-02 
+2024-03-26 16:44:47,079 INFO: [train..][epoch: 40, iter:  59,400, lr:(1.000e-04,)] [eta: 18:52:20, time (data): 1.669 (0.003)] l_pix: 8.7635e-02 
+2024-03-26 16:47:33,699 INFO: [train..][epoch: 40, iter:  59,500, lr:(1.000e-04,)] [eta: 18:49:32, time (data): 1.667 (0.003)] l_pix: 8.7572e-02 
+2024-03-26 16:50:20,366 INFO: [train..][epoch: 40, iter:  59,600, lr:(1.000e-04,)] [eta: 18:46:44, time (data): 1.668 (0.003)] l_pix: 8.3182e-02 
+2024-03-26 16:53:06,548 INFO: [train..][epoch: 40, iter:  59,700, lr:(1.000e-04,)] [eta: 18:43:55, time (data): 1.664 (0.003)] l_pix: 6.8235e-02 
+2024-03-26 16:55:52,740 INFO: [train..][epoch: 40, iter:  59,800, lr:(1.000e-04,)] [eta: 18:41:06, time (data): 1.662 (0.003)] l_pix: 1.0085e-01 
+2024-03-26 16:58:39,197 INFO: [train..][epoch: 40, iter:  59,900, lr:(1.000e-04,)] [eta: 18:38:17, time (data): 1.664 (0.003)] l_pix: 6.3241e-02 
+2024-03-26 17:01:25,592 INFO: [train..][epoch: 40, iter:  60,000, lr:(1.000e-04,)] [eta: 18:35:29, time (data): 1.666 (0.003)] l_pix: 7.0247e-02 
+2024-03-26 17:01:25,592 INFO: Saving models and training states.
+2024-03-26 17:04:12,632 INFO: [train..][epoch: 40, iter:  60,100, lr:(1.000e-04,)] [eta: 18:32:41, time (data): 1.666 (0.003)] l_pix: 9.4689e-02 
+2024-03-26 17:07:14,173 INFO: [train..][epoch: 41, iter:  60,200, lr:(1.000e-04,)] [eta: 18:30:12, time (data): 1.967 (0.308)] l_pix: 7.1945e-02 
+2024-03-26 17:10:00,484 INFO: [train..][epoch: 41, iter:  60,300, lr:(1.000e-04,)] [eta: 18:27:24, time (data): 1.765 (0.105)] l_pix: 6.4309e-02 
+2024-03-26 17:12:46,722 INFO: [train..][epoch: 41, iter:  60,400, lr:(1.000e-04,)] [eta: 18:24:35, time (data): 1.666 (0.003)] l_pix: 6.3292e-02 
+2024-03-26 17:19:05,877 INFO: [train..][epoch: 41, iter:  60,500, lr:(1.000e-04,)] [eta: 18:26:22, time (data): 3.092 (0.003)] l_pix: 7.8038e-02 
+2024-03-26 17:27:02,768 INFO: [train..][epoch: 41, iter:  60,600, lr:(1.000e-04,)] [eta: 18:30:11, time (data): 4.765 (0.003)] l_pix: 9.5128e-02 
+2024-03-26 17:34:58,360 INFO: [train..][epoch: 41, iter:  60,700, lr:(1.000e-04,)] [eta: 18:33:54, time (data): 4.759 (0.003)] l_pix: 5.8500e-02 
+2024-03-26 17:42:54,456 INFO: [train..][epoch: 41, iter:  60,800, lr:(1.000e-04,)] [eta: 18:37:34, time (data): 4.754 (0.003)] l_pix: 9.0946e-02 
+2024-03-26 17:50:50,064 INFO: [train..][epoch: 41, iter:  60,900, lr:(1.000e-04,)] [eta: 18:41:08, time (data): 4.755 (0.003)] l_pix: 6.5522e-02 
+2024-03-26 17:58:45,487 INFO: [train..][epoch: 41, iter:  61,000, lr:(1.000e-04,)] [eta: 18:44:38, time (data): 4.753 (0.003)] l_pix: 9.3454e-02 
+2024-03-26 18:06:41,694 INFO: [train..][epoch: 41, iter:  61,100, lr:(1.000e-04,)] [eta: 18:48:04, time (data): 4.759 (0.003)] l_pix: 9.1822e-02 
+2024-03-26 18:14:38,247 INFO: [train..][epoch: 41, iter:  61,200, lr:(1.000e-04,)] [eta: 18:51:26, time (data): 4.771 (0.003)] l_pix: 6.8202e-02 
+2024-03-26 18:22:31,280 INFO: [train..][epoch: 41, iter:  61,300, lr:(1.000e-04,)] [eta: 18:54:40, time (data): 4.743 (0.003)] l_pix: 8.0445e-02 
+2024-03-26 18:30:18,533 INFO: [train..][epoch: 41, iter:  61,400, lr:(1.000e-04,)] [eta: 18:57:42, time (data): 4.668 (0.003)] l_pix: 7.9935e-02 
+2024-03-26 18:38:08,009 INFO: [train..][epoch: 41, iter:  61,500, lr:(1.000e-04,)] [eta: 19:00:43, time (data): 4.687 (0.003)] l_pix: 7.2238e-02 
+2024-03-26 18:45:55,706 INFO: [train..][epoch: 41, iter:  61,600, lr:(1.000e-04,)] [eta: 19:03:37, time (data): 4.685 (0.003)] l_pix: 8.7543e-02 
+2024-03-26 18:56:29,543 INFO: [train..][epoch: 42, iter:  61,700, lr:(1.000e-04,)] [eta: 19:09:48, time (data): 5.841 (0.109)] l_pix: 8.4040e-02 
+2024-03-26 19:07:39,300 INFO: [train..][epoch: 42, iter:  61,800, lr:(1.000e-04,)] [eta: 19:16:36, time (data): 6.050 (0.003)] l_pix: 8.1812e-02 
+2024-03-26 19:17:35,471 INFO: [train..][epoch: 42, iter:  61,900, lr:(1.000e-04,)] [eta: 19:21:50, time (data): 5.988 (0.003)] l_pix: 1.0832e-01 
+2024-03-26 19:27:27,643 INFO: [train..][epoch: 42, iter:  62,000, lr:(1.000e-04,)] [eta: 19:26:53, time (data): 6.176 (0.003)] l_pix: 8.2750e-02 
+2024-03-26 19:37:01,332 INFO: [train..][epoch: 42, iter:  62,100, lr:(1.000e-04,)] [eta: 19:31:28, time (data): 5.864 (0.003)] l_pix: 8.0666e-02 
+2024-03-26 19:46:40,023 INFO: [train..][epoch: 42, iter:  62,200, lr:(1.000e-04,)] [eta: 19:36:04, time (data): 5.773 (0.003)] l_pix: 9.1924e-02 
+2024-03-26 19:56:16,776 INFO: [train..][epoch: 42, iter:  62,300, lr:(1.000e-04,)] [eta: 19:40:33, time (data): 5.769 (0.003)] l_pix: 6.9740e-02 
+2024-03-26 20:05:53,636 INFO: [train..][epoch: 42, iter:  62,400, lr:(1.000e-04,)] [eta: 19:44:56, time (data): 5.773 (0.003)] l_pix: 8.9387e-02 
+2024-03-26 20:15:30,391 INFO: [train..][epoch: 42, iter:  62,500, lr:(1.000e-04,)] [eta: 19:49:15, time (data): 5.769 (0.003)] l_pix: 7.6818e-02 
+2024-03-26 20:25:07,286 INFO: [train..][epoch: 42, iter:  62,600, lr:(1.000e-04,)] [eta: 19:53:28, time (data): 5.768 (0.003)] l_pix: 9.4030e-02 
+2024-03-26 20:34:44,089 INFO: [train..][epoch: 42, iter:  62,700, lr:(1.000e-04,)] [eta: 19:57:36, time (data): 5.768 (0.003)] l_pix: 7.3246e-02 
+2024-03-26 20:44:30,380 INFO: [train..][epoch: 42, iter:  62,800, lr:(1.000e-04,)] [eta: 20:01:50, time (data): 5.748 (0.003)] l_pix: 9.1159e-02 
+2024-03-26 20:54:04,818 INFO: [train..][epoch: 42, iter:  62,900, lr:(1.000e-04,)] [eta: 20:05:45, time (data): 5.745 (0.003)] l_pix: 8.0399e-02 
+2024-03-26 21:05:51,841 INFO: [train..][epoch: 42, iter:  63,000, lr:(1.000e-04,)] [eta: 20:12:04, time (data): 8.450 (0.003)] l_pix: 7.8539e-02 
+2024-03-26 21:17:04,505 INFO: [train..][epoch: 43, iter:  63,100, lr:(1.000e-04,)] [eta: 20:17:38, time (data): 7.183 (0.122)] l_pix: 9.1602e-02 
+2024-03-26 21:28:34,882 INFO: [train..][epoch: 43, iter:  63,200, lr:(1.000e-04,)] [eta: 20:23:26, time (data): 6.530 (0.003)] l_pix: 6.9742e-02 
+2024-03-26 21:38:59,835 INFO: [train..][epoch: 43, iter:  63,300, lr:(1.000e-04,)] [eta: 20:27:55, time (data): 6.322 (0.003)] l_pix: 9.2779e-02 
+2024-03-26 21:49:10,326 INFO: [train..][epoch: 43, iter:  63,400, lr:(1.000e-04,)] [eta: 20:32:03, time (data): 6.118 (0.003)] l_pix: 8.5556e-02 
+2024-03-26 21:59:26,589 INFO: [train..][epoch: 43, iter:  63,500, lr:(1.000e-04,)] [eta: 20:36:13, time (data): 6.151 (0.003)] l_pix: 6.7591e-02 
+2024-03-26 22:09:40,711 INFO: [train..][epoch: 43, iter:  63,600, lr:(1.000e-04,)] [eta: 20:40:15, time (data): 6.143 (0.003)] l_pix: 7.7310e-02 
+2024-03-26 22:19:54,481 INFO: [train..][epoch: 43, iter:  63,700, lr:(1.000e-04,)] [eta: 20:44:11, time (data): 6.139 (0.003)] l_pix: 7.8862e-02 
+2024-03-26 22:30:08,627 INFO: [train..][epoch: 43, iter:  63,800, lr:(1.000e-04,)] [eta: 20:48:03, time (data): 6.131 (0.003)] l_pix: 6.3339e-02 
+2024-03-26 22:40:22,200 INFO: [train..][epoch: 43, iter:  63,900, lr:(1.000e-04,)] [eta: 20:51:49, time (data): 6.135 (0.003)] l_pix: 9.8237e-02 
+2024-03-26 22:50:38,785 INFO: [train..][epoch: 43, iter:  64,000, lr:(1.000e-04,)] [eta: 20:55:34, time (data): 6.123 (0.003)] l_pix: 6.9304e-02 
+2024-03-26 23:00:50,610 INFO: [train..][epoch: 43, iter:  64,100, lr:(1.000e-04,)] [eta: 20:59:08, time (data): 6.119 (0.003)] l_pix: 6.7239e-02 
+2024-03-26 23:10:56,012 INFO: [train..][epoch: 43, iter:  64,200, lr:(1.000e-04,)] [eta: 21:02:31, time (data): 6.033 (0.003)] l_pix: 8.5574e-02 
+2024-03-26 23:20:58,868 INFO: [train..][epoch: 43, iter:  64,300, lr:(1.000e-04,)] [eta: 21:05:47, time (data): 6.029 (0.003)] l_pix: 7.1858e-02 
+2024-03-26 23:31:02,049 INFO: [train..][epoch: 43, iter:  64,400, lr:(1.000e-04,)] [eta: 21:08:58, time (data): 6.031 (0.003)] l_pix: 6.8953e-02 
+2024-03-26 23:41:20,432 INFO: [train..][epoch: 44, iter:  64,500, lr:(1.000e-04,)] [eta: 21:12:20, time (data): 6.149 (0.126)] l_pix: 8.3590e-02 
+2024-03-26 23:51:22,337 INFO: [train..][epoch: 44, iter:  64,600, lr:(1.000e-04,)] [eta: 21:15:21, time (data): 6.020 (0.003)] l_pix: 8.5782e-02 
+2024-03-27 00:01:24,685 INFO: [train..][epoch: 44, iter:  64,700, lr:(1.000e-04,)] [eta: 21:18:18, time (data): 6.023 (0.003)] l_pix: 5.7201e-02 
+2024-03-27 00:11:27,493 INFO: [train..][epoch: 44, iter:  64,800, lr:(1.000e-04,)] [eta: 21:21:10, time (data): 6.029 (0.003)] l_pix: 8.6951e-02 
+2024-03-27 00:21:30,580 INFO: [train..][epoch: 44, iter:  64,900, lr:(1.000e-04,)] [eta: 21:23:59, time (data): 6.030 (0.003)] l_pix: 9.2125e-02 
+2024-03-27 00:31:33,321 INFO: [train..][epoch: 44, iter:  65,000, lr:(1.000e-04,)] [eta: 21:26:43, time (data): 6.029 (0.003)] l_pix: 7.7853e-02 
+2024-03-27 00:31:33,321 INFO: Saving models and training states.
+2024-03-27 00:41:36,372 INFO: [train..][epoch: 44, iter:  65,100, lr:(1.000e-04,)] [eta: 21:29:22, time (data): 6.025 (0.003)] l_pix: 8.5182e-02 
+2024-03-27 00:51:39,195 INFO: [train..][epoch: 44, iter:  65,200, lr:(1.000e-04,)] [eta: 21:31:57, time (data): 6.022 (0.003)] l_pix: 8.1337e-02 
+2024-03-27 01:01:42,754 INFO: [train..][epoch: 44, iter:  65,300, lr:(1.000e-04,)] [eta: 21:34:29, time (data): 6.033 (0.003)] l_pix: 6.5925e-02 
+2024-03-27 01:11:46,661 INFO: [train..][epoch: 44, iter:  65,400, lr:(1.000e-04,)] [eta: 21:36:57, time (data): 6.028 (0.003)] l_pix: 7.2410e-02 
+2024-03-27 01:21:49,865 INFO: [train..][epoch: 44, iter:  65,500, lr:(1.000e-04,)] [eta: 21:39:19, time (data): 6.031 (0.003)] l_pix: 8.5232e-02 
+2024-03-27 01:31:52,697 INFO: [train..][epoch: 44, iter:  65,600, lr:(1.000e-04,)] [eta: 21:41:37, time (data): 6.036 (0.003)] l_pix: 7.9328e-02 
+2024-03-27 01:41:55,608 INFO: [train..][epoch: 44, iter:  65,700, lr:(1.000e-04,)] [eta: 21:43:52, time (data): 6.030 (0.003)] l_pix: 9.1565e-02 
+2024-03-27 01:51:58,673 INFO: [train..][epoch: 44, iter:  65,800, lr:(1.000e-04,)] [eta: 21:46:02, time (data): 6.025 (0.003)] l_pix: 4.9599e-02 
+2024-03-27 02:02:02,231 INFO: [train..][epoch: 44, iter:  65,900, lr:(1.000e-04,)] [eta: 21:48:08, time (data): 6.034 (0.003)] l_pix: 6.8793e-02 
+2024-03-27 02:12:19,687 INFO: [train..][epoch: 45, iter:  66,000, lr:(1.000e-04,)] [eta: 21:50:24, time (data): 6.027 (0.003)] l_pix: 7.5632e-02 
+2024-03-27 02:22:23,258 INFO: [train..][epoch: 45, iter:  66,100, lr:(1.000e-04,)] [eta: 21:52:22, time (data): 6.034 (0.003)] l_pix: 9.8776e-02 
+2024-03-27 02:32:27,296 INFO: [train..][epoch: 45, iter:  66,200, lr:(1.000e-04,)] [eta: 21:54:17, time (data): 6.026 (0.003)] l_pix: 7.5662e-02 
+2024-03-27 02:42:30,401 INFO: [train..][epoch: 45, iter:  66,300, lr:(1.000e-04,)] [eta: 21:56:07, time (data): 6.030 (0.003)] l_pix: 5.9667e-02 
+2024-03-27 02:52:34,469 INFO: [train..][epoch: 45, iter:  66,400, lr:(1.000e-04,)] [eta: 21:57:54, time (data): 6.045 (0.003)] l_pix: 9.7657e-02 
+2024-03-27 03:02:38,161 INFO: [train..][epoch: 45, iter:  66,500, lr:(1.000e-04,)] [eta: 21:59:36, time (data): 6.038 (0.003)] l_pix: 1.0579e-01 
+2024-03-27 03:12:41,943 INFO: [train..][epoch: 45, iter:  66,600, lr:(1.000e-04,)] [eta: 22:01:15, time (data): 6.032 (0.003)] l_pix: 7.6365e-02 
+2024-03-27 03:22:45,469 INFO: [train..][epoch: 45, iter:  66,700, lr:(1.000e-04,)] [eta: 22:02:50, time (data): 6.035 (0.003)] l_pix: 8.1620e-02 
+2024-03-27 03:32:48,617 INFO: [train..][epoch: 45, iter:  66,800, lr:(1.000e-04,)] [eta: 22:04:21, time (data): 6.031 (0.003)] l_pix: 6.5818e-02 
+2024-03-27 03:42:54,799 INFO: [train..][epoch: 45, iter:  66,900, lr:(1.000e-04,)] [eta: 22:05:51, time (data): 6.057 (0.003)] l_pix: 6.9938e-02 
+2024-03-27 03:52:58,247 INFO: [train..][epoch: 45, iter:  67,000, lr:(1.000e-04,)] [eta: 22:07:14, time (data): 6.033 (0.002)] l_pix: 8.1158e-02 
+2024-03-27 04:03:02,029 INFO: [train..][epoch: 45, iter:  67,100, lr:(1.000e-04,)] [eta: 22:08:34, time (data): 6.037 (0.003)] l_pix: 7.8928e-02 
+2024-03-27 04:13:06,018 INFO: [train..][epoch: 45, iter:  67,200, lr:(1.000e-04,)] [eta: 22:09:51, time (data): 6.036 (0.003)] l_pix: 8.2186e-02 
+2024-03-27 04:23:10,559 INFO: [train..][epoch: 45, iter:  67,300, lr:(1.000e-04,)] [eta: 22:11:04, time (data): 6.044 (0.003)] l_pix: 8.9905e-02 
+2024-03-27 04:33:29,166 INFO: [train..][epoch: 46, iter:  67,400, lr:(1.000e-04,)] [eta: 22:12:26, time (data): 6.039 (0.003)] l_pix: 6.2601e-02 
+2024-03-27 04:43:33,238 INFO: [train..][epoch: 46, iter:  67,500, lr:(1.000e-04,)] [eta: 22:13:32, time (data): 6.040 (0.003)] l_pix: 9.5838e-02 
+2024-03-27 04:53:37,180 INFO: [train..][epoch: 46, iter:  67,600, lr:(1.000e-04,)] [eta: 22:14:34, time (data): 6.049 (0.003)] l_pix: 1.0170e-01 
+2024-03-27 05:03:40,897 INFO: [train..][epoch: 46, iter:  67,700, lr:(1.000e-04,)] [eta: 22:15:32, time (data): 6.039 (0.003)] l_pix: 9.4055e-02 
+2024-03-27 05:13:44,261 INFO: [train..][epoch: 46, iter:  67,800, lr:(1.000e-04,)] [eta: 22:16:27, time (data): 6.026 (0.003)] l_pix: 6.3083e-02 
+2024-03-27 05:23:48,757 INFO: [train..][epoch: 46, iter:  67,900, lr:(1.000e-04,)] [eta: 22:17:19, time (data): 6.043 (0.003)] l_pix: 5.3746e-02 
+2024-03-27 05:33:53,537 INFO: [train..][epoch: 46, iter:  68,000, lr:(1.000e-04,)] [eta: 22:18:08, time (data): 6.062 (0.003)] l_pix: 6.9564e-02 
+2024-03-27 05:43:58,467 INFO: [train..][epoch: 46, iter:  68,100, lr:(1.000e-04,)] [eta: 22:18:53, time (data): 6.051 (0.003)] l_pix: 8.2156e-02 
+2024-03-27 05:54:03,360 INFO: [train..][epoch: 46, iter:  68,200, lr:(1.000e-04,)] [eta: 22:19:35, time (data): 6.055 (0.003)] l_pix: 7.7707e-02 
+2024-03-27 06:04:08,185 INFO: [train..][epoch: 46, iter:  68,300, lr:(1.000e-04,)] [eta: 22:20:14, time (data): 6.049 (0.003)] l_pix: 7.3149e-02 
+2024-03-27 06:14:12,697 INFO: [train..][epoch: 46, iter:  68,400, lr:(1.000e-04,)] [eta: 22:20:49, time (data): 6.062 (0.003)] l_pix: 1.1942e-01 
+2024-03-27 06:24:17,739 INFO: [train..][epoch: 46, iter:  68,500, lr:(1.000e-04,)] [eta: 22:21:21, time (data): 6.051 (0.003)] l_pix: 7.9757e-02 
+2024-03-27 06:34:22,538 INFO: [train..][epoch: 46, iter:  68,600, lr:(1.000e-04,)] [eta: 22:21:50, time (data): 6.042 (0.003)] l_pix: 8.0503e-02 
+2024-03-27 06:44:27,560 INFO: [train..][epoch: 46, iter:  68,700, lr:(1.000e-04,)] [eta: 22:22:15, time (data): 6.050 (0.003)] l_pix: 8.7322e-02 
+2024-03-27 06:54:47,332 INFO: [train..][epoch: 47, iter:  68,800, lr:(1.000e-04,)] [eta: 22:22:49, time (data): 8.209 (2.151)] l_pix: 7.7386e-02 
+2024-03-27 07:04:52,531 INFO: [train..][epoch: 47, iter:  68,900, lr:(1.000e-04,)] [eta: 22:23:08, time (data): 6.193 (0.143)] l_pix: 7.9569e-02 
+2024-03-27 07:14:57,635 INFO: [train..][epoch: 47, iter:  69,000, lr:(1.000e-04,)] [eta: 22:23:24, time (data): 6.060 (0.002)] l_pix: 6.7394e-02 
+2024-03-27 07:25:03,436 INFO: [train..][epoch: 47, iter:  69,100, lr:(1.000e-04,)] [eta: 22:23:37, time (data): 6.058 (0.003)] l_pix: 1.1180e-01 
+2024-03-27 07:35:08,520 INFO: [train..][epoch: 47, iter:  69,200, lr:(1.000e-04,)] [eta: 22:23:47, time (data): 6.090 (0.003)] l_pix: 7.7389e-02 
+2024-03-27 07:45:13,543 INFO: [train..][epoch: 47, iter:  69,300, lr:(1.000e-04,)] [eta: 22:23:53, time (data): 6.052 (0.003)] l_pix: 8.5648e-02 
+2024-03-27 07:55:18,901 INFO: [train..][epoch: 47, iter:  69,400, lr:(1.000e-04,)] [eta: 22:23:57, time (data): 6.062 (0.004)] l_pix: 9.4646e-02 
+2024-03-27 08:05:24,761 INFO: [train..][epoch: 47, iter:  69,500, lr:(1.000e-04,)] [eta: 22:23:58, time (data): 6.059 (0.003)] l_pix: 7.7746e-02 
+2024-03-27 08:15:30,186 INFO: [train..][epoch: 47, iter:  69,600, lr:(1.000e-04,)] [eta: 22:23:55, time (data): 6.091 (0.002)] l_pix: 1.0021e-01 
+2024-03-27 08:25:37,038 INFO: [train..][epoch: 47, iter:  69,700, lr:(1.000e-04,)] [eta: 22:23:50, time (data): 6.069 (0.003)] l_pix: 9.3511e-02 
+2024-03-27 08:35:42,858 INFO: [train..][epoch: 47, iter:  69,800, lr:(1.000e-04,)] [eta: 22:23:42, time (data): 6.071 (0.002)] l_pix: 8.1251e-02 
+2024-03-27 08:45:49,230 INFO: [train..][epoch: 47, iter:  69,900, lr:(1.000e-04,)] [eta: 22:23:31, time (data): 6.064 (0.003)] l_pix: 6.9292e-02 
+2024-03-27 08:55:54,799 INFO: [train..][epoch: 47, iter:  70,000, lr:(1.000e-04,)] [eta: 22:23:17, time (data): 6.143 (0.003)] l_pix: 6.6808e-02 
+2024-03-27 08:55:54,799 INFO: Saving models and training states.
+2024-03-27 09:06:01,510 INFO: [train..][epoch: 47, iter:  70,100, lr:(1.000e-04,)] [eta: 22:23:00, time (data): 6.063 (0.003)] l_pix: 6.8492e-02 
+2024-03-27 09:16:07,490 INFO: [train..][epoch: 47, iter:  70,200, lr:(1.000e-04,)] [eta: 22:22:40, time (data): 6.061 (0.003)] l_pix: 6.9623e-02 
+2024-03-27 09:26:29,330 INFO: [train..][epoch: 48, iter:  70,300, lr:(1.000e-04,)] [eta: 22:22:29, time (data): 6.218 (0.154)] l_pix: 7.6040e-02 
+2024-03-27 09:36:35,237 INFO: [train..][epoch: 48, iter:  70,400, lr:(1.000e-04,)] [eta: 22:22:02, time (data): 6.139 (0.078)] l_pix: 7.4062e-02 
+2024-03-27 09:46:41,263 INFO: [train..][epoch: 48, iter:  70,500, lr:(1.000e-04,)] [eta: 22:21:34, time (data): 6.061 (0.003)] l_pix: 7.2871e-02 
+2024-03-27 09:56:47,520 INFO: [train..][epoch: 48, iter:  70,600, lr:(1.000e-04,)] [eta: 22:21:02, time (data): 6.062 (0.003)] l_pix: 8.1031e-02 
+2024-03-27 10:06:54,359 INFO: [train..][epoch: 48, iter:  70,700, lr:(1.000e-04,)] [eta: 22:20:28, time (data): 6.069 (0.003)] l_pix: 8.0614e-02 
+2024-03-27 10:17:01,083 INFO: [train..][epoch: 48, iter:  70,800, lr:(1.000e-04,)] [eta: 22:19:52, time (data): 6.068 (0.003)] l_pix: 8.6093e-02 
+2024-03-27 10:27:08,346 INFO: [train..][epoch: 48, iter:  70,900, lr:(1.000e-04,)] [eta: 22:19:12, time (data): 6.074 (0.003)] l_pix: 8.2458e-02 
+2024-03-27 10:37:15,769 INFO: [train..][epoch: 48, iter:  71,000, lr:(1.000e-04,)] [eta: 22:18:31, time (data): 6.074 (0.003)] l_pix: 6.9770e-02 
+2024-03-27 10:47:23,371 INFO: [train..][epoch: 48, iter:  71,100, lr:(1.000e-04,)] [eta: 22:17:46, time (data): 6.076 (0.003)] l_pix: 9.4598e-02 
+2024-03-27 10:57:30,011 INFO: [train..][epoch: 48, iter:  71,200, lr:(1.000e-04,)] [eta: 22:16:58, time (data): 6.071 (0.003)] l_pix: 8.7089e-02 
+2024-03-27 11:07:37,072 INFO: [train..][epoch: 48, iter:  71,300, lr:(1.000e-04,)] [eta: 22:16:08, time (data): 6.072 (0.003)] l_pix: 9.1665e-02 
+2024-03-27 11:17:45,156 INFO: [train..][epoch: 48, iter:  71,400, lr:(1.000e-04,)] [eta: 22:15:16, time (data): 6.076 (0.003)] l_pix: 9.6193e-02 
+2024-03-27 11:27:53,190 INFO: [train..][epoch: 48, iter:  71,500, lr:(1.000e-04,)] [eta: 22:14:21, time (data): 6.075 (0.003)] l_pix: 7.1868e-02 
+2024-03-27 11:38:00,434 INFO: [train..][epoch: 48, iter:  71,600, lr:(1.000e-04,)] [eta: 22:13:23, time (data): 6.074 (0.003)] l_pix: 1.0633e-01 
+2024-03-27 11:48:22,593 INFO: [train..][epoch: 49, iter:  71,700, lr:(1.000e-04,)] [eta: 22:12:32, time (data): 6.234 (0.165)] l_pix: 8.8830e-02 
+2024-03-27 11:58:29,921 INFO: [train..][epoch: 49, iter:  71,800, lr:(1.000e-04,)] [eta: 22:11:29, time (data): 6.151 (0.081)] l_pix: 6.3950e-02 
+2024-03-27 12:08:37,607 INFO: [train..][epoch: 49, iter:  71,900, lr:(1.000e-04,)] [eta: 22:10:23, time (data): 6.077 (0.003)] l_pix: 7.5457e-02 
+2024-03-27 12:18:45,589 INFO: [train..][epoch: 49, iter:  72,000, lr:(1.000e-04,)] [eta: 22:09:15, time (data): 6.078 (0.003)] l_pix: 5.2495e-02 
+2024-03-27 12:28:54,185 INFO: [train..][epoch: 49, iter:  72,100, lr:(1.000e-04,)] [eta: 22:08:04, time (data): 6.086 (0.003)] l_pix: 8.3438e-02 
+2024-03-27 12:39:02,586 INFO: [train..][epoch: 49, iter:  72,200, lr:(1.000e-04,)] [eta: 22:06:51, time (data): 6.085 (0.003)] l_pix: 8.6736e-02 
+2024-03-27 12:49:10,424 INFO: [train..][epoch: 49, iter:  72,300, lr:(1.000e-04,)] [eta: 22:05:35, time (data): 6.078 (0.003)] l_pix: 8.1139e-02 
+2024-03-27 12:59:18,582 INFO: [train..][epoch: 49, iter:  72,400, lr:(1.000e-04,)] [eta: 22:04:17, time (data): 6.080 (0.003)] l_pix: 7.1830e-02 
+2024-03-27 13:09:26,435 INFO: [train..][epoch: 49, iter:  72,500, lr:(1.000e-04,)] [eta: 22:02:56, time (data): 6.080 (0.003)] l_pix: 8.0869e-02 
+2024-03-27 13:19:34,973 INFO: [train..][epoch: 49, iter:  72,600, lr:(1.000e-04,)] [eta: 22:01:33, time (data): 6.083 (0.003)] l_pix: 7.6047e-02 
+2024-03-27 13:29:43,462 INFO: [train..][epoch: 49, iter:  72,700, lr:(1.000e-04,)] [eta: 22:00:08, time (data): 6.085 (0.003)] l_pix: 9.2900e-02 
+2024-03-27 13:39:51,566 INFO: [train..][epoch: 49, iter:  72,800, lr:(1.000e-04,)] [eta: 21:58:40, time (data): 6.083 (0.003)] l_pix: 8.1986e-02 
+2024-03-27 13:49:59,646 INFO: [train..][epoch: 49, iter:  72,900, lr:(1.000e-04,)] [eta: 21:57:09, time (data): 6.082 (0.003)] l_pix: 8.7249e-02 
+2024-03-27 14:00:08,043 INFO: [train..][epoch: 49, iter:  73,000, lr:(1.000e-04,)] [eta: 21:55:37, time (data): 6.083 (0.003)] l_pix: 7.4523e-02 
+2024-03-27 14:10:16,537 INFO: [train..][epoch: 49, iter:  73,100, lr:(1.000e-04,)] [eta: 21:54:02, time (data): 6.086 (0.003)] l_pix: 8.9145e-02 
+2024-03-27 14:20:40,344 INFO: [train..][epoch: 50, iter:  73,200, lr:(1.000e-04,)] [eta: 21:52:34, time (data): 6.168 (0.082)] l_pix: 7.5574e-02 
+2024-03-27 14:30:48,770 INFO: [train..][epoch: 50, iter:  73,300, lr:(1.000e-04,)] [eta: 21:50:54, time (data): 6.086 (0.003)] l_pix: 8.5338e-02 
+2024-03-27 14:40:57,747 INFO: [train..][epoch: 50, iter:  73,400, lr:(1.000e-04,)] [eta: 21:49:12, time (data): 6.088 (0.003)] l_pix: 6.4082e-02 
+2024-03-27 14:51:06,664 INFO: [train..][epoch: 50, iter:  73,500, lr:(1.000e-04,)] [eta: 21:47:27, time (data): 6.090 (0.003)] l_pix: 6.2772e-02 
+2024-03-27 15:01:15,383 INFO: [train..][epoch: 50, iter:  73,600, lr:(1.000e-04,)] [eta: 21:45:41, time (data): 6.089 (0.003)] l_pix: 7.3725e-02 
+2024-03-27 15:11:23,980 INFO: [train..][epoch: 50, iter:  73,700, lr:(1.000e-04,)] [eta: 21:43:52, time (data): 6.085 (0.003)] l_pix: 8.9742e-02 
+2024-03-27 15:21:32,930 INFO: [train..][epoch: 50, iter:  73,800, lr:(1.000e-04,)] [eta: 21:42:00, time (data): 6.088 (0.003)] l_pix: 6.8711e-02 
+2024-03-27 15:31:41,750 INFO: [train..][epoch: 50, iter:  73,900, lr:(1.000e-04,)] [eta: 21:40:07, time (data): 6.090 (0.003)] l_pix: 9.0171e-02 
+2024-03-27 15:41:50,580 INFO: [train..][epoch: 50, iter:  74,000, lr:(1.000e-04,)] [eta: 21:38:11, time (data): 6.089 (0.003)] l_pix: 8.0728e-02 
+2024-03-27 15:51:59,118 INFO: [train..][epoch: 50, iter:  74,100, lr:(1.000e-04,)] [eta: 21:36:13, time (data): 6.086 (0.003)] l_pix: 9.4374e-02 
+2024-03-27 16:02:07,927 INFO: [train..][epoch: 50, iter:  74,200, lr:(1.000e-04,)] [eta: 21:34:13, time (data): 6.087 (0.003)] l_pix: 8.6582e-02 
+2024-03-27 16:12:17,047 INFO: [train..][epoch: 50, iter:  74,300, lr:(1.000e-04,)] [eta: 21:32:11, time (data): 6.089 (0.003)] l_pix: 1.0033e-01 
+2024-03-27 16:22:26,320 INFO: [train..][epoch: 50, iter:  74,400, lr:(1.000e-04,)] [eta: 21:30:06, time (data): 6.091 (0.003)] l_pix: 7.6274e-02 
+2024-03-27 16:32:35,983 INFO: [train..][epoch: 50, iter:  74,500, lr:(1.000e-04,)] [eta: 21:28:00, time (data): 6.099 (0.003)] l_pix: 9.3280e-02 
+2024-03-27 16:43:00,586 INFO: [train..][epoch: 51, iter:  74,600, lr:(1.000e-04,)] [eta: 21:26:00, time (data): 6.181 (0.089)] l_pix: 6.9392e-02 
+2024-03-27 16:53:09,615 INFO: [train..][epoch: 51, iter:  74,700, lr:(1.000e-04,)] [eta: 21:23:49, time (data): 6.093 (0.003)] l_pix: 7.7774e-02 
+2024-03-27 17:03:19,209 INFO: [train..][epoch: 51, iter:  74,800, lr:(1.000e-04,)] [eta: 21:21:36, time (data): 6.095 (0.003)] l_pix: 8.9852e-02 
+2024-03-27 17:13:28,607 INFO: [train..][epoch: 51, iter:  74,900, lr:(1.000e-04,)] [eta: 21:19:21, time (data): 6.097 (0.003)] l_pix: 7.0275e-02 
+2024-03-27 17:23:38,338 INFO: [train..][epoch: 51, iter:  75,000, lr:(1.000e-04,)] [eta: 21:17:04, time (data): 6.097 (0.003)] l_pix: 7.4660e-02 
+2024-03-27 17:23:38,338 INFO: Saving models and training states.
+2024-03-27 17:33:48,862 INFO: [train..][epoch: 51, iter:  75,100, lr:(1.000e-04,)] [eta: 21:14:45, time (data): 6.099 (0.003)] l_pix: 7.3432e-02 
+2024-03-27 17:43:58,402 INFO: [train..][epoch: 51, iter:  75,200, lr:(1.000e-04,)] [eta: 21:12:24, time (data): 6.097 (0.003)] l_pix: 7.0673e-02 
+2024-03-27 17:54:36,992 INFO: [train..][epoch: 51, iter:  75,300, lr:(1.000e-04,)] [eta: 21:10:16, time (data): 6.481 (0.003)] l_pix: 7.8484e-02 
+2024-03-27 18:08:27,246 INFO: [train..][epoch: 51, iter:  75,400, lr:(1.000e-04,)] [eta: 21:09:50, time (data): 7.522 (0.003)] l_pix: 9.8943e-02 
+2024-03-27 18:22:24,689 INFO: [train..][epoch: 51, iter:  75,500, lr:(1.000e-04,)] [eta: 21:09:25, time (data): 8.398 (0.003)] l_pix: 8.0779e-02 
+2024-03-27 18:36:05,322 INFO: [train..][epoch: 51, iter:  75,600, lr:(1.000e-04,)] [eta: 21:08:47, time (data): 8.288 (0.003)] l_pix: 6.8217e-02 
+2024-03-27 18:49:52,801 INFO: [train..][epoch: 51, iter:  75,700, lr:(1.000e-04,)] [eta: 21:08:09, time (data): 8.509 (0.003)] l_pix: 8.5789e-02 
+2024-03-27 19:03:53,681 INFO: [train..][epoch: 51, iter:  75,800, lr:(1.000e-04,)] [eta: 21:07:34, time (data): 8.451 (0.003)] l_pix: 6.1661e-02 
+2024-03-27 19:18:21,160 INFO: [train..][epoch: 51, iter:  75,900, lr:(1.000e-04,)] [eta: 21:07:11, time (data): 8.764 (0.002)] l_pix: 9.4525e-02 
+2024-03-27 19:33:11,601 INFO: [train..][epoch: 52, iter:  76,000, lr:(1.000e-04,)] [eta: 21:06:55, time (data): 8.846 (0.094)] l_pix: 7.0692e-02 
+2024-03-27 19:48:18,197 INFO: [train..][epoch: 52, iter:  76,100, lr:(1.000e-04,)] [eta: 21:06:44, time (data): 9.105 (0.003)] l_pix: 7.6603e-02 
+2024-03-27 20:03:21,402 INFO: [train..][epoch: 52, iter:  76,200, lr:(1.000e-04,)] [eta: 21:06:28, time (data): 9.062 (0.003)] l_pix: 8.0784e-02 
+2024-03-27 20:17:58,720 INFO: [train..][epoch: 52, iter:  76,300, lr:(1.000e-04,)] [eta: 21:05:54, time (data): 8.770 (0.003)] l_pix: 6.2020e-02 
+2024-03-27 20:33:34,205 INFO: [train..][epoch: 52, iter:  76,400, lr:(1.000e-04,)] [eta: 21:05:46, time (data): 9.114 (0.003)] l_pix: 7.3853e-02 
+2024-03-27 20:49:32,734 INFO: [train..][epoch: 52, iter:  76,500, lr:(1.000e-04,)] [eta: 21:05:46, time (data): 9.608 (0.003)] l_pix: 7.8208e-02 
+2024-03-27 21:04:54,843 INFO: [train..][epoch: 52, iter:  76,600, lr:(1.000e-04,)] [eta: 21:05:24, time (data): 9.379 (0.003)] l_pix: 8.3798e-02 
+2024-03-27 21:20:21,588 INFO: [train..][epoch: 52, iter:  76,700, lr:(1.000e-04,)] [eta: 21:05:00, time (data): 9.197 (0.003)] l_pix: 8.1575e-02 
+2024-03-27 21:35:40,880 INFO: [train..][epoch: 52, iter:  76,800, lr:(1.000e-04,)] [eta: 21:04:28, time (data): 9.195 (0.003)] l_pix: 9.4603e-02 
+2024-03-27 21:51:07,927 INFO: [train..][epoch: 52, iter:  76,900, lr:(1.000e-04,)] [eta: 21:03:57, time (data): 9.311 (0.003)] l_pix: 7.6474e-02 
+2024-03-27 22:06:42,341 INFO: [train..][epoch: 52, iter:  77,000, lr:(1.000e-04,)] [eta: 21:03:25, time (data): 9.331 (0.003)] l_pix: 8.0159e-02 

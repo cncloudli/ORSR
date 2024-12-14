@@ -1,0 +1,10 @@
+test1.jpg; L1 loss:tensor(14.8429); L2 loss:tensor(493.0641); PSNR:21.20177016575728; MS SSIM:tensor(0.8952); 
+test2.jpg; L1 loss:tensor(10.1587); L2 loss:tensor(283.6740); PSNR:23.602609045428533; MS SSIM:tensor(0.8187); 
+test3.jpg; L1 loss:tensor(12.9275); L2 loss:tensor(597.8763); PSNR:20.36468991602668; MS SSIM:tensor(0.8493); 
+test4.jpg; L1 loss:tensor(10.2409); L2 loss:tensor(245.5368); PSNR:24.22963734924388; MS SSIM:tensor(0.8183); 
+test5.jpg; L1 loss:tensor(17.0739); L2 loss:tensor(867.4456); PSNR:18.74838103553287; MS SSIM:tensor(0.7817); 
+test6.jpg; L1 loss:tensor(5.7723); L2 loss:tensor(115.6130); PSNR:27.500735221255713; MS SSIM:tensor(0.9391); 
+test7.jpg; L1 loss:tensor(8.0308); L2 loss:tensor(358.2976); PSNR:22.588364157585758; MS SSIM:tensor(0.9023); 
+test8.jpg; L1 loss:tensor(4.6891); L2 loss:tensor(55.3316); PSNR:30.701069809743213; MS SSIM:tensor(0.9092); 
+test9.jpg; L1 loss:tensor(22.4840); L2 loss:tensor(1297.4104); PSNR:17.000029858384057; MS SSIM:tensor(0.5999);
+test10.jpg; L1 loss:tensor(16.7883); L2 loss:tensor(3686.6267); PSNR:12.464511957151787; MS SSIM:tensor(0.7949);  
