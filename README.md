@@ -10,3 +10,5 @@
 <h4> [mmsegmentation](mmsegmentation/README_zh-CN.md) 为 [DeSRA](mmsegmentation/desra) 提供必要环境，故一起打包放在这里。</h4>
 
 <h3>具体使用方法请参考各项目内的readme文件以及本目录所附的 [文档](doc.pdf) </h3>
+
+以后有空的话会全部整理一遍。可以修改的地方还有很多，比如前端UI，自动化的电子包浆之类的。
